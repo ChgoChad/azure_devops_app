@@ -89,7 +89,7 @@ class _CodeElementBuilder extends MarkdownElementBuilder {
 }
 
 Map<String, TextStyle> _customTheme(BuildContext context) => {
-      'root': TextStyle(color: Colors.transparent, backgroundColor: Colors.transparent),
+      'root': TextStyle(color: context.colorScheme.onSurface, backgroundColor: Colors.transparent),
       'comment': TextStyle(color: Color(0xff999988), fontStyle: FontStyle.italic),
       'quote': TextStyle(color: Color(0xff999988), fontStyle: FontStyle.italic),
       'keyword': TextStyle(color: context.colorScheme.primary, fontWeight: FontWeight.normal),
