@@ -1,13 +1,12 @@
 part of pipelines;
 
-class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _PipelinesController._(this.api, this.storage, this.args, this.ads) {
+class _PipelinesController with FilterMixin, ApiErrorHelper {
+  _PipelinesController._(this.api, this.storage, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
   final PipelinesArgs? args;
 
   final pipelines = ValueNotifier<ApiResponse<List<Pipeline>?>?>(null);
@@ -52,7 +51,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await _getDataAndAds();
+    await _getData();
 
     if (pipelines.value != null) {
       final shouldRefresh = inProgressPipelines > 0 || queuedPipelines > 0 || cancellingPipelines > 0;
@@ -68,11 +67,6 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
         });
       }
     }
-  }
-
-  Future<void> _getDataAndAds() async {
-    await getNewNativeAds(ads);
-    await _getData();
   }
 
   void _fillSavedFilters() {
@@ -168,7 +162,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     projectsFilter = projects;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesProjectsFilter(projects.map((p) => p.name!).toSet());
@@ -180,7 +174,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     resultFilter = result;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesResultFilter(result.stringValue);
@@ -192,7 +186,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     statusFilter = status;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesStatusFilter(status.stringValue);
@@ -204,7 +198,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     usersFilter = users;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesTriggeredByFilter(users.map((p) => p.mailAddress!).toSet());
@@ -216,7 +210,7 @@ class _PipelinesController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pipelines.value = null;
     pipelineNamesFilter = names;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePipelinesNamesFilter(names);

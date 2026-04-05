@@ -1,6 +1,5 @@
 import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/screens/work_items/base_work_items.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +19,7 @@ void main() {
       theme: mockTheme,
       home: StorageServiceWidget(
         storage: StorageServiceMock(),
-        child: AdsServiceWidget(
-          ads: AdsServiceMock(),
-          child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: WorkItemsPage()),
-        ),
+        child: AzureApiServiceWidget(api: AzureApiServiceMock(), child: WorkItemsPage()),
       ),
     );
 

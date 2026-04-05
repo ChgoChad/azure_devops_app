@@ -1,10 +1,9 @@
 part of board_detail;
 
-class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
-  _BoardDetailController._(this.api, this.args, this.ads);
+class _BoardDetailController with ApiErrorHelper, FilterMixin {
+  _BoardDetailController._(this.api, this.args);
 
   final AzureApiService api;
-  final AdsService ads;
   final BoardDetailArgs args;
 
   final boardWithItems = ValueNotifier<ApiResponse<BoardDetailWithItems>?>(null);
@@ -138,10 +137,7 @@ class _BoardDetailController with ApiErrorHelper, AdsMixin, FilterMixin {
       return OverlayService.error('Error', description: 'Item not updated.\n${errorMessage.msg}');
     }
 
-    await showInterstitialAd(
-      ads,
-      onDismiss: () => OverlayService.snackbar('Item successfully moved to column $column'),
-    );
+    OverlayService.snackbar('Item successfully moved to column $column');
 
     await init();
   }

@@ -1,10 +1,8 @@
 library saved_queries;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/models/saved_query.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -31,7 +29,7 @@ class SavedQueriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getSavedQueriesArgs(context);
     return AppBasePage(
-      initState: () => _SavedQueriesController._(args, context.api, context.ads),
+      initState: () => _SavedQueriesController._(args, context.api),
       smartphone: (ctrl) => _SavedQueriesScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _SavedQueriesScreen(ctrl, _tabletParameters),
     );

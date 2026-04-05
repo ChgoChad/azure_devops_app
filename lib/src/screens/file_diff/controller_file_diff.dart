@@ -1,10 +1,9 @@
 part of file_diff;
 
-class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
-  _FileDiffController._(this.api, this.args, this.ads);
+class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper {
+  _FileDiffController._(this.api, this.args);
 
   final AzureApiService api;
-  final AdsService ads;
   final FileDiffArgs args;
 
   final diff = ValueNotifier<ApiResponse<Diff?>?>(null);
@@ -156,11 +155,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       isRightFile: isRightFile,
     );
 
-    logAnalytics('add_pr_comment_from_file_diff', {
-      'comment_length': comment.length,
-      'is_error': res.isError.toString(),
-    });
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not added');
     }
@@ -171,8 +165,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       // close popup menu
       AppRouter.pop();
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -203,18 +195,11 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       text: newComment,
     );
 
-    logAnalytics('edit_pr_comment_from_file_diff', {
-      'comment_length': newComment.length,
-      'is_error': res.isError.toString(),
-    });
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not edited');
     }
 
     AppRouter.pop();
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -234,15 +219,11 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
       comment: comment,
     );
 
-    logAnalytics('delete_pr_comment_from_file_diff', {'is_error': res.isError.toString()});
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
 
     AppRouter.pop();
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -263,8 +244,6 @@ class _FileDiffController with ShareMixin, AppLogger, PullRequestHelper, AdsMixi
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
 
     AppRouter.pop();
-
-    await showInterstitialAd(ads);
 
     await init();
   }

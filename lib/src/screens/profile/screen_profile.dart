@@ -18,8 +18,6 @@ class _ProfileScreen extends StatelessWidget {
           return SliverFillRemaining(child: Center(child: Text('No commits found')));
         }
 
-        var adsIndex = 0;
-
         return SliverList(
           delegate: SliverChildBuilderDelegate(childCount: commits.length, (_, index) {
             final c = commits[index];
@@ -145,20 +143,6 @@ class _ProfileScreen extends StatelessWidget {
                       onTap: () => ctrl.goToCommitDetail(c),
                       isLast: c == commits.last,
                     ),
-                ],
-              );
-            }
-
-            if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
-              return Column(
-                children: [
-                  CommitListTile(
-                    commit: c,
-                    showAuthor: false,
-                    onTap: () => ctrl.goToCommitDetail(c),
-                    isLast: c == commits.last,
-                  ),
-                  CustomAdWidget(item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++]),
                 ],
               );
             }

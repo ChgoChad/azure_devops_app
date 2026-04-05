@@ -1,12 +1,11 @@
 part of pull_request_detail;
 
-class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper, AdsMixin {
-  _PullRequestDetailController._(this.args, this.api, this.ads);
+class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper {
+  _PullRequestDetailController._(this.args, this.api);
 
   final PullRequestDetailArgs args;
 
   final AzureApiService api;
-  final AdsService ads;
 
   final prDetail = ValueNotifier<ApiResponse<PullRequestWithDetails?>?>(null);
 
@@ -386,15 +385,11 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       reviewer: reviewer.copyWith(vote: vote),
     );
 
-    logAnalytics('pr_vote', {'vote': vote, 'is_error': res.isError});
-
     if (res.isError) {
       final errorMsg = _getErrorMessage(res);
       await OverlayService.error('Error', description: errorMsg);
       return;
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -432,20 +427,11 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       completionOptions: completionOptions,
     );
 
-    logAnalytics('pr_edit', {
-      if (status != null) 'status': status.name,
-      'isDraft': ?isDraft,
-      'autocomplete': ?autocomplete,
-      'is_error': res.isError,
-    });
-
     if (res.isError) {
       final errorMsg = _getErrorMessage(res);
       await OverlayService.error('Error', description: errorMsg);
       return;
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -646,13 +632,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       repositoryId: args.repository,
     );
 
-    logAnalytics('add_pr_comment', {'comment_length': comment.length, 'is_error': res.isError.toString()});
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not added');
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -683,13 +665,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       text: newComment,
     );
 
-    logAnalytics('edit_pr_comment', {'comment_length': newComment.length, 'is_error': res.isError.toString()});
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not edited');
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -709,13 +687,9 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
       comment: comment,
     );
 
-    logAnalytics('delete_pr_comment', {'is_error': res.isError.toString()});
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -734,8 +708,6 @@ class _PullRequestDetailController with ShareMixin, AppLogger, PullRequestHelper
     );
 
     if (!(res.data ?? false)) return OverlayService.snackbar('Status not updated', isError: true);
-
-    await showInterstitialAd(ads);
 
     await init();
   }

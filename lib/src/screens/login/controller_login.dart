@@ -1,10 +1,11 @@
 part of login;
 
 class _LoginController with AppLogger {
-  _LoginController._(this.api, this.storage);
+  _LoginController._(this.api, this.storage, {MsalService? msal}) : msal = msal ?? MsalService();
 
   final StorageService storage;
   final AzureApiService api;
+  final MsalService msal;
 
   final formFieldKey = GlobalKey<FormFieldState<dynamic>>();
 
@@ -16,10 +17,14 @@ class _LoginController with AppLogger {
   }
 
   Future<void> loginWithMicrosoft() async {
-    final loginRes = await MsalService().login();
-    if (loginRes == null) return;
+    try {
+      final loginRes = await msal.login();
+      if (loginRes == null) return;
 
-    await _loginAndNavigate(loginRes, isPat: false);
+      await _loginAndNavigate(loginRes, isPat: false);
+    } catch (e) {
+      _showLoginErrorAlert(description: e.toString());
+    }
   }
 
   Future<void> login() async {
@@ -32,10 +37,6 @@ class _LoginController with AppLogger {
   Future<void> _loginAndNavigate(LoginResponse loginResponse, {required bool isPat}) async {
     final isLogged = await api.login(loginResponse.accessToken);
 
-    final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
-
-    logAnalytics('signin_with_${isPat ? 'pat' : 'microsoft'}_${isFailed ? 'failed' : 'success'}', {});
-
     if (isLogged == LoginStatus.failed) {
       _showLoginErrorAlert();
       return;
@@ -45,7 +46,7 @@ class _LoginController with AppLogger {
       final hasSetOrg = await _setOrgManually();
       if (!hasSetOrg) return;
 
-      final isLoggedManually = await api.login(pat);
+      final isLoggedManually = await api.login(isPat ? pat : loginResponse.accessToken);
       if (isLoggedManually == LoginStatus.failed) {
         _showLoginErrorAlert();
         return;
@@ -70,8 +71,8 @@ class _LoginController with AppLogger {
     );
   }
 
-  void _showLoginErrorAlert() {
-    OverlayService.error('Login error', description: 'Check that your PAT is correct and retry');
+  void _showLoginErrorAlert({String? description}) {
+    OverlayService.error('Login error', description: description ?? 'Check that your PAT is correct and retry');
   }
 
   Future<bool> _setOrgManually() async {

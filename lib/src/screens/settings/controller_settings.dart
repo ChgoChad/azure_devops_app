@@ -42,10 +42,6 @@ class _SettingsController with ShareMixin, AppLogger {
     unawaited(AppRouter.goToLogin());
   }
 
-  void goToChooseSubscription() {
-    AppRouter.goToChooseSubscription();
-  }
-
   void seeChosenProjects() {
     AppRouter.goToChooseProjects(removeRoutes: false);
   }
@@ -115,10 +111,6 @@ class _SettingsController with ShareMixin, AppLogger {
       ..setTenantId(loginResponse.tenantId);
 
     final isLogged = await api.login(loginResponse.accessToken);
-
-    final isFailed = [LoginStatus.failed, LoginStatus.unauthorized].contains(isLogged);
-
-    logAnalytics('switch_directory_${isFailed ? 'failed' : 'success'}', {});
 
     if (isLogged == LoginStatus.failed) {
       return _switchDirectoryErrorAlert();

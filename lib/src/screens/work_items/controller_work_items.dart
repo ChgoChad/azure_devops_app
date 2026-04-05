@@ -1,13 +1,12 @@
 part of work_items;
 
-class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _WorkItemsController._(this.api, this.storage, this.args, this.ads) {
+class _WorkItemsController with FilterMixin, ApiErrorHelper {
+  _WorkItemsController._(this.api, this.storage, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
   final WorkItemsArgs? args;
 
   final workItems = ValueNotifier<ApiResponse<List<WorkItem>?>?>(null);
@@ -68,7 +67,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
       }
     }
 
-    await _getDataAndAds();
+    await _getData();
 
     if (shouldPersistFilters) {
       if (savedFilters?.area.isNotEmpty ?? false) {
@@ -85,11 +84,6 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
             .firstWhereOrNull((a) => a.path == savedFilters!.iteration.first);
       }
     }
-  }
-
-  Future<void> _getDataAndAds() async {
-    await getNewNativeAds(ads);
-    await _getData();
   }
 
   /// Here we fill some filters with fake objects just to show them immediately,
@@ -163,7 +157,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   Future<void> goToWorkItemDetail(WorkItem item) async {
     await AppRouter.goToWorkItemDetail(project: item.fields.systemTeamProject, id: item.id);
-    await _getDataAndAds();
+    await _getData();
   }
 
   void filterByProjects(Set<Project> projects) {
@@ -184,7 +178,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
       }
     }
 
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsProjectsFilter(projects.map((p) => p.name!).toSet());
@@ -226,7 +220,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     statesFilter = states;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsStatesFilter(states.map((p) => p.name).toSet());
@@ -238,7 +232,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     stateCategoriesFilter = categories;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsCategoriesFilter(stateCategoriesFilter.map((p) => p.name).toSet());
@@ -250,7 +244,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     typesFilter = types;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsTypesFilter(types.map((p) => p.name).toSet());
@@ -262,7 +256,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     usersFilter = users;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsAssigneesFilter(users.map((p) => p.mailAddress!).toSet());
@@ -274,7 +268,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     areaFilter = area;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsAreaFilter(area?.path ?? '');
@@ -286,7 +280,7 @@ class _WorkItemsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     workItems.value = null;
     iterationFilter = iteration;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveWorkItemsIterationFilter(iteration?.path ?? '');

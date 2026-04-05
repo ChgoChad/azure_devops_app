@@ -1,7 +1,7 @@
 part of create_or_edit_work_item;
 
-class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
-  _CreateOrEditWorkItemController._(this.api, this.args, this.storage, this.ads) {
+class _CreateOrEditWorkItemController with FilterMixin, AppLogger {
+  _CreateOrEditWorkItemController._(this.api, this.args, this.storage) {
     if (args.project != null) {
       newWorkItemProject = getProjects(storage).firstWhereOrNull((p) => p.name == args.project) ?? projectAll;
     }
@@ -11,7 +11,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
   final CreateOrEditWorkItemArgs args;
 
   final hasChanged = ValueNotifier<ApiResponse<bool>?>(null);
@@ -268,12 +267,6 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
 
     final res = isEditing ? await _editWorkItem(assignedTo) : await _createWorkItem(assignedTo);
 
-    logAnalytics('${isEditing ? 'edited' : 'created'}_work_item', {
-      'work_item_type': newWorkItemType.name,
-      'is_error': res.isError.toString(),
-      'customization': newWorkItemType.customization,
-    });
-
     if (res.isError) {
       final isInherited = ![null, 'system'].contains(newWorkItemType.customization);
       var description = 'Work item not ${isEditing ? 'edited' : 'created'}.';
@@ -309,7 +302,7 @@ class _CreateOrEditWorkItemController with FilterMixin, AppLogger, AdsMixin {
       return OverlayService.error('Error', description: description);
     }
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Changes saved'));
+    OverlayService.snackbar('Changes saved');
 
     hasChanged.value = ApiResponse.ok(false);
 

@@ -123,4 +123,31 @@ void main() {
     final chooseProjectPageTitle = find.textContaining('Choose projects');
     expect(chooseProjectPageTitle, findsOneWidget);
   });
+  testWidgets("Login with Microsoft brings user to 'Choose project' page", (t) async {
+    final msalMock = MsalServiceMock();
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: MaterialApp(
+          navigatorKey: AppRouter.navigatorKey,
+          routes: AppRouter.routes,
+          theme: mockTheme,
+          home: LoginPage(msal: msalMock),
+        ),
+      ),
+    );
+
+    await t.pumpWidget(app);
+
+    final microsoftButton = find.text('Sign in with Microsoft');
+    expect(microsoftButton, findsOneWidget);
+
+    await t.tap(microsoftButton);
+
+    await t.pumpAndSettle();
+
+    final chooseProjectPageTitle = find.textContaining('Choose projects');
+    expect(chooseProjectPageTitle, findsOneWidget);
+  });
 }

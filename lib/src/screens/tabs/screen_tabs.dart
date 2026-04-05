@@ -40,12 +40,6 @@ class _TabsScreen extends StatelessWidget {
               navigatorKey: ctrl.navPages[i].key,
               navigatorObservers: [
                 SentryNavigatorObserver(routeNameExtractor: (settings) => ctrl.getRouteSettingsName(settings, i)),
-                if (useFirebase)
-                  FirebaseAnalyticsObserver(
-                    analytics: FirebaseAnalytics.instance,
-                    nameExtractor: (settings) => ctrl.getRouteName(settings, i),
-                    routeFilter: (route) => route?.settings.name != null && route!.settings.name != '/',
-                  ),
               ],
               onGenerateRoute: (route) => MaterialPageRoute(
                 builder: (ctx) => route.name == '/'

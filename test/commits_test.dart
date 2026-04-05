@@ -1,5 +1,4 @@
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +17,7 @@ void main() {
       theme: mockTheme,
       home: AzureApiServiceWidget(
         api: AzureApiServiceMock(),
-        child: AdsServiceWidget(
-          ads: AdsServiceMock(),
-          child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
-        ),
+        child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
       ),
     );
 
@@ -37,10 +33,7 @@ void main() {
       theme: mockTheme,
       home: AzureApiServiceWidget(
         api: AzureApiServiceMock(),
-        child: AdsServiceWidget(
-          ads: AdsServiceMock(),
-          child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
-        ),
+        child: StorageServiceWidget(storage: StorageServiceMock(), child: CommitsPage()),
       ),
     );
 

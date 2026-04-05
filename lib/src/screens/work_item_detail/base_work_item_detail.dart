@@ -7,7 +7,6 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/string_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_relation_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
@@ -17,7 +16,6 @@ import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
@@ -61,7 +59,7 @@ class WorkItemDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getWorkItemDetailArgs(context);
     return AppBasePage(
-      initState: () => _WorkItemDetailController._(args, context.api, context.storage, context.ads),
+      initState: () => _WorkItemDetailController._(args, context.api, context.storage),
       smartphone: (ctrl) => _WorkItemDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _WorkItemDetailScreen(ctrl, _tabletParameters),
     );

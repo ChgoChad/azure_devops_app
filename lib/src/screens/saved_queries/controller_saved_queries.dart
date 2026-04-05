@@ -1,11 +1,10 @@
 part of saved_queries;
 
-class _SavedQueriesController with AdsMixin {
-  _SavedQueriesController._(this.args, this.api, this.ads);
+class _SavedQueriesController {
+  _SavedQueriesController._(this.args, this.api);
 
   final SavedQueriesArgs args;
   final AzureApiService api;
-  final AdsService ads;
 
   final savedQueries = ValueNotifier<ApiResponse<SavedQuery>?>(null);
 
@@ -41,7 +40,7 @@ class _SavedQueriesController with AdsMixin {
       return OverlayService.error('Error', description: 'Query not renamed');
     }
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Query successfully renamed'));
+    OverlayService.snackbar('Query successfully renamed');
 
     await init();
   }
@@ -56,7 +55,7 @@ class _SavedQueriesController with AdsMixin {
       return OverlayService.error('Error', description: 'Query not deleted');
     }
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Query successfully deleted'));
+    OverlayService.snackbar('Query successfully deleted');
 
     await init();
   }

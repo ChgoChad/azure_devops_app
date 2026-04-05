@@ -3,10 +3,12 @@ import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/theme/theme.dart';
-import 'package:azure_devops/src/widgets/html_widget.dart';
+import 'package:azure_devops/src/widgets/markdown_widget.dart';
 import 'package:azure_devops/src/widgets/member_avatar.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PullRequestCommentCard extends StatelessWidget {
   const PullRequestCommentCard({
@@ -141,7 +143,22 @@ class PullRequestCommentCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            HtmlWidget(data: comment.content),
+            AppMarkdownWidget(
+              data: comment.content,
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+                p: context.textTheme.labelMedium,
+                a: context.textTheme.labelMedium!.copyWith(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.blue,
+                ),
+              ),
+              onTapLink: (text, href, title) async {
+                if (href != null && await canLaunchUrlString(href)) {
+                  await launchUrlString(href);
+                }
+              },
+            ),
           ],
         ),
       ),

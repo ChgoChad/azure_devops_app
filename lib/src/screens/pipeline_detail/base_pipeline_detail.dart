@@ -9,14 +9,12 @@ import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/duration_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_extension.dart';
 import 'package:azure_devops/src/extensions/pipeline_result_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
 import 'package:azure_devops/src/models/pipeline.dart';
 import 'package:azure_devops/src/models/pipeline_approvals.dart';
 import 'package:azure_devops/src/models/timeline.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -50,7 +48,7 @@ class PipelineDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getPipelineDetailArgs(context);
     return AppBasePage(
-      initState: () => _PipelineDetailController._(args, context.api, context.ads),
+      initState: () => _PipelineDetailController._(args, context.api),
       smartphone: (ctrl) => _PipelineDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PipelineDetailScreen(ctrl, _tabletParameters),
     );

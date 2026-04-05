@@ -21,7 +21,9 @@ part 'parameters_login.dart';
 part 'screen_login.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage();
+  const LoginPage({this.msal});
+
+  final MsalService? msal;
 
   static const _smartphoneParameters = _LoginParameters();
   static const _tabletParameters = _LoginParameters();
@@ -29,7 +31,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBasePage(
-      initState: () => _LoginController._(context.api, context.storage),
+      initState: () => _LoginController._(context.api, context.storage, msal: msal),
       smartphone: (ctrl) => _LoginScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _LoginScreen(ctrl, _tabletParameters),
     );
