@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:azure_devops/src/models/amazon/amazon_item.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
 import 'package:azure_devops/src/models/board.dart';
 import 'package:azure_devops/src/models/commit.dart';
@@ -32,17 +31,52 @@ import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_item_tags.dart';
 import 'package:azure_devops/src/models/work_item_updates.dart';
 import 'package:azure_devops/src/models/work_items.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
-import 'package:azure_devops/src/services/purchase_service.dart';
+import 'package:azure_devops/src/services/msal_service.dart';
+
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/src/ad_containers.dart';
 
 final mockTheme = ThemeData(
   extensions: [AppColorsExtension(background: Colors.white, onBackground: Colors.black)],
 );
+
+class MsalServiceMock implements MsalService {
+  @override
+  void dispose() {}
+
+  @override
+  Future<void> init() async {}
+
+  @override
+  Future<LoginResponse?> login({String? authority}) async {
+    return LoginResponse(accessToken: 'validToken', tenantId: 'tenantId');
+  }
+
+  @override
+  Future<String?> loginSilently({String? authority}) async {
+    return 'validToken';
+  }
+
+  @override
+  Future<void> logout() async {}
+
+  @override
+  void logDebug(String msg) {}
+
+  @override
+  void logError(Object? exception, Object stacktrace) {}
+
+  @override
+  void logErrorMessage(String message) {}
+
+  @override
+  void logInfo(String msg) {}
+
+  @override
+  void setTag(String tag) {}
+}
 
 class AzureApiServiceMock implements AzureApiService {
   @override
@@ -947,70 +981,8 @@ class StorageServiceMock implements StorageService {
   void setTenantChosenProjects(String tenant, Iterable<Project> projects) {}
 }
 
-class AdsServiceMock implements AdsService {
-  @override
-  Future<void> init() async {}
 
-  @override
-  void reactivateAds() {}
 
-  @override
-  void removeAds() {}
-
-  @override
-  Future<void> showInterstitialAd({VoidCallback? onDismiss}) async {}
-
-  @override
-  Future<List<AdWithView>> getNewNativeAds() async {
-    return [];
-  }
-
-  @override
-  Future<List<AmazonItem>> getNewAmazonAds() async {
-    return [];
-  }
-
-  @override
-  bool get hasAmazonAds => false;
-}
-
-class PurchaseServiceMock implements PurchaseService {
-  @override
-  Future<bool> checkSubscription() async {
-    return true;
-  }
-
-  @override
-  Future<PurchaseResult> buySubscription(AppProduct product) async {
-    return PurchaseResult.success;
-  }
-
-  @override
-  Future<List<AppProduct>> getProducts() async {
-    return [];
-  }
-
-  @override
-  Future<bool> hasSubscription() async {
-    return true;
-  }
-
-  @override
-  Future<void> init({String? userId, String? userName}) async {}
-
-  @override
-  bool isSubscribed(String productId) {
-    return true;
-  }
-
-  @override
-  Future<bool> restorePurchases() async {
-    return true;
-  }
-
-  @override
-  ValueNotifier<String> get entitlementName => ValueNotifier('');
-}
 
 extension on WorkItem {
   WorkItem copyWith({int? id, int? rev, ItemFields? fields}) {

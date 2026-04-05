@@ -59,20 +59,9 @@ class _CommitsScreen extends StatelessWidget {
               ],
             ),
       sliverBuilder: (commits) {
-        var adsIndex = 0;
-
         return SliverList(
           delegate: SliverChildBuilderDelegate(childCount: commits?.length ?? 0, (_, index) {
             final c = commits![index];
-
-            if (ctrl.shouldShowNativeAd(commits, c, adsIndex)) {
-              return Column(
-                children: [
-                  CommitListTile(commit: c, onTap: () => ctrl.goToCommitDetail(c), isLast: c == commits.last),
-                  CustomAdWidget(item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++]),
-                ],
-              );
-            }
 
             return CommitListTile(commit: c, onTap: () => ctrl.goToCommitDetail(c), isLast: c == commits.last);
           }),

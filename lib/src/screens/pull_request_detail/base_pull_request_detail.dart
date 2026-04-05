@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/extensions/pull_request_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/mixins/pull_request_mixin.dart';
 import 'package:azure_devops/src/mixins/share_mixin.dart';
@@ -16,7 +15,6 @@ import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/pull_request_policies.dart';
 import 'package:azure_devops/src/models/pull_request_with_details.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
@@ -60,7 +58,7 @@ class PullRequestDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getPullRequestDetailArgs(context);
     return AppBasePage(
-      initState: () => _PullRequestDetailController._(args, context.api, context.ads),
+      initState: () => _PullRequestDetailController._(args, context.api),
       smartphone: (ctrl) => _PullRequestDetailScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PullRequestDetailScreen(ctrl, _tabletParameters),
     );

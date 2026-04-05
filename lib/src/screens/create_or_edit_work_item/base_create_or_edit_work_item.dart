@@ -7,7 +7,6 @@ import 'package:azure_devops/src/extensions/area_or_iteration_extension.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/string_extension.dart';
 import 'package:azure_devops/src/extensions/work_item_relation_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
 import 'package:azure_devops/src/models/areas_and_iterations.dart';
@@ -18,7 +17,6 @@ import 'package:azure_devops/src/models/work_item_fields.dart';
 import 'package:azure_devops/src/models/work_item_link_types.dart';
 import 'package:azure_devops/src/models/work_items.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/rules_checker.dart';
@@ -51,7 +49,7 @@ class CreateOrEditWorkItemPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getCreateOrEditWorkItemArgs(context);
     return AppBasePage(
-      initState: () => _CreateOrEditWorkItemController._(context.api, args, context.storage, context.ads),
+      initState: () => _CreateOrEditWorkItemController._(context.api, args, context.storage),
       smartphone: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _CreateOrEditWorkItemScreen(ctrl, _tabletParameters),
     );

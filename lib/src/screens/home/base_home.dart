@@ -3,7 +3,6 @@ library home;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:azure_devops/main.dart';
 import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/string_extension.dart';
 import 'package:azure_devops/src/mixins/logger_mixin.dart';
@@ -12,20 +11,17 @@ import 'package:azure_devops/src/router/router.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
-import 'package:azure_devops/src/services/purchase_service.dart';
 import 'package:azure_devops/src/services/share_intent_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
-import 'package:azure_devops/src/widgets/loading_button.dart';
 import 'package:azure_devops/src/widgets/navigation_button.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/project_card.dart';
 import 'package:azure_devops/src/widgets/search_field.dart';
 import 'package:azure_devops/src/widgets/section_header.dart';
 import 'package:azure_devops/src/widgets/work_card.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -45,7 +41,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBasePage(
-      initState: () => _HomeController._(context.api, context.storage, context.purchase),
+      initState: () => _HomeController._(context.api, context.storage),
       smartphone: (ctrl) => _HomeScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _HomeScreen(ctrl, _tabletParameters),
     );

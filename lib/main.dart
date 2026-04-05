@@ -1,20 +1,16 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:azure_devops/firebase_options.dart';
 import 'package:azure_devops/src/app.dart';
 import 'package:azure_devops/src/bindings/fix_ipad_popup_autoclose_binding.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:azure_devops/src/theme/theme.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purple_theme/purple_theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-const useFirebase = bool.fromEnvironment('FIREBASE');
 const _sentryDns = String.fromEnvironment('SENTRY_DNS');
 
 Future<void> main() async {
@@ -25,18 +21,11 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (useFirebase) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  }
-
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await StorageServiceCore().init();
 
   PurpleThemeHandler().init(defaultTheme: AppTheme.darkTheme, allThemes: AppTheme.allThemes);
-
-  // ignore: unawaited_futures, to speed up app start
-  AdsServiceImpl().init();
 
   if (_sentryDns.isEmpty || kDebugMode) {
     runApp(const AzureDevOps());

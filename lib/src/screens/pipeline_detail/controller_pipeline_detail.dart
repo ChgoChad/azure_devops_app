@@ -1,11 +1,10 @@
 part of pipeline_detail;
 
-class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
-  _PipelineDetailController._(this.args, this.api, this.ads) : visibilityKey = GlobalKey();
+class _PipelineDetailController with ShareMixin, ApiErrorHelper {
+  _PipelineDetailController._(this.args, this.api) : visibilityKey = GlobalKey();
 
   final ({String project, int id}) args;
   final AzureApiService api;
-  final AdsService ads;
 
   final buildDetail = ValueNotifier<ApiResponse<PipelineWithTimeline?>?>(null);
 
@@ -123,8 +122,6 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
       return OverlayService.error('Build not canceled', description: 'Try again');
     }
 
-    await showInterstitialAd(ads);
-
     AppRouter.pop();
   }
 
@@ -144,8 +141,6 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
     if (res.isError) {
       return OverlayService.error('Build not rerun', description: 'Try again');
     }
-
-    await showInterstitialAd(ads);
 
     AppRouter.pop();
   }
@@ -293,7 +288,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
     AppRouter.popRoute();
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval approved successfully'));
+    OverlayService.snackbar('Approval approved successfully');
   }
 
   Future<void> _deferApproval(Approval approval) async {
@@ -317,7 +312,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
     AppRouter.popRoute();
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval deferred successfully'));
+    OverlayService.snackbar('Approval deferred successfully');
   }
 
   Future<void> _rejectApproval(Approval approval) async {
@@ -334,7 +329,7 @@ class _PipelineDetailController with ShareMixin, AdsMixin, ApiErrorHelper {
 
     AppRouter.popRoute();
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Approval rejected successfully'));
+    OverlayService.snackbar('Approval rejected successfully');
   }
 }
 

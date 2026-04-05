@@ -20,8 +20,6 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
   bool _hasAlreadyLogged = false;
   AppLifecycleState? _previousState;
 
-  DateTime _lastSubscriptionCheck = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -47,25 +45,12 @@ class _LifecycleListenerState extends State<LifecycleListener> with WidgetsBindi
         _inactiveTimer = Timer(Duration(seconds: 300), () => _hasAlreadyLogged = false);
       }
     } else if (state == AppLifecycleState.resumed) {
-      final now = DateTime.now();
-      final shouldCheck = now.difference(_lastSubscriptionCheck) > Duration(hours: 1);
-
-      if (shouldCheck && user != null) {
-        logDebug('Session resumed');
-        _checkSubscription();
-        _lastSubscriptionCheck = now;
-      }
-
       if (Platform.isAndroid && user != null) {
         ShareIntentService().maybeHandleSharedUrl();
       }
     }
 
     _previousState = state;
-  }
-
-  void _checkSubscription() {
-    context.purchase.checkSubscription();
   }
 
   @override

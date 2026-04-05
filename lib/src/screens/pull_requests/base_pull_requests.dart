@@ -1,19 +1,16 @@
 library pull_requests;
 
 import 'package:azure_devops/src/extensions/context_extension.dart';
-import 'package:azure_devops/src/mixins/ads_mixin.dart';
 import 'package:azure_devops/src/mixins/api_error_mixin.dart';
 import 'package:azure_devops/src/mixins/filter_mixin.dart';
 import 'package:azure_devops/src/models/project.dart';
 import 'package:azure_devops/src/models/pull_request.dart';
 import 'package:azure_devops/src/models/user.dart';
 import 'package:azure_devops/src/router/router.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/filters_service.dart';
 import 'package:azure_devops/src/services/overlay_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
-import 'package:azure_devops/src/widgets/ad_widget.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/app_page.dart';
 import 'package:azure_devops/src/widgets/filter_menu.dart';
@@ -38,7 +35,7 @@ class PullRequestsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = AppRouter.getPullRequestsArgs(context);
     return AppBasePage(
-      initState: () => _PullRequestsController._(context.api, context.storage, args, context.ads),
+      initState: () => _PullRequestsController._(context.api, context.storage, args),
       smartphone: (ctrl) => _PullRequestsScreen(ctrl, _smartphoneParameters),
       tablet: (ctrl) => _PullRequestsScreen(ctrl, _tabletParameters),
     );

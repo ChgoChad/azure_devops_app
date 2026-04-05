@@ -24,6 +24,10 @@ class MsalService with AppLogger {
     const msalClientId = String.fromEnvironment('MSAL_CLIENT_ID');
     const msalRedirectUri = String.fromEnvironment('MSAL_REDIRECT_URI');
 
+    if (msalClientId.isEmpty || msalRedirectUri.isEmpty) {
+      throw Exception('MSAL_CLIENT_ID or MSAL_REDIRECT_URI is missing. Please provide them via --dart-define.');
+    }
+
     _pca = await SingleAccountPca.create(
       clientId: msalClientId,
       androidConfig: AndroidConfig(configFilePath: 'assets/msal_config.json', redirectUri: msalRedirectUri),
@@ -49,9 +53,9 @@ class MsalService with AppLogger {
       return LoginResponse(accessToken: token.accessToken, tenantId: token.tenantId ?? '');
     } on MsalUserCancelException catch (_) {
       return null;
-    } on MsalException catch (e, s) {
+    } catch (e, s) {
       logError(e, s);
-      return null;
+      rethrow;
     }
   }
 

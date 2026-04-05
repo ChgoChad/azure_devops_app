@@ -1,7 +1,7 @@
 part of commits;
 
-class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _CommitsController._(this.api, this.storage, this.args, this.ads) {
+class _CommitsController with FilterMixin, ApiErrorHelper {
+  _CommitsController._(this.api, this.storage, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
     if (args?.author != null) usersFilter = {args!.author!};
     if (args?.repository != null) repositoryFilter = args!.repository;
@@ -9,7 +9,6 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
   final CommitsArgs? args;
 
   final recentCommits = ValueNotifier<ApiResponse<List<Commit>?>?>(null);
@@ -33,11 +32,6 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await _getDataAndAds();
-  }
-
-  Future<void> _getDataAndAds() async {
-    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -116,7 +110,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     recentCommits.value = null;
     projectsFilter = projects;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveCommitsProjectsFilter(projects.map((p) => p.name!).toSet());
@@ -128,7 +122,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     recentCommits.value = null;
     usersFilter = users;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveCommitsAuthorsFilter(users.map((p) => p.mailAddress!).toSet());
@@ -140,7 +134,7 @@ class _CommitsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     recentCommits.value = null;
     repositoryFilter = repository;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.saveCommitsRepositoryFilter({if (repositoryFilter != null) _repositoryFilterKey});

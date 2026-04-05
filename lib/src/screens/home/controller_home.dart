@@ -1,11 +1,10 @@
 part of home;
 
 class _HomeController with AppLogger {
-  _HomeController._(this.api, this.storage, this.purchase);
+  _HomeController._(this.api, this.storage);
 
   final AzureApiService api;
   final StorageService storage;
-  final PurchaseService purchase;
 
   final projects = ValueNotifier<ApiResponse<List<Project>>?>(null);
   List<Project> allProjects = [];
@@ -24,8 +23,6 @@ class _HomeController with AppLogger {
   Future<void> init() async {
     final allProjectsRes = await api.getProjects();
     allProjects = allProjectsRes.data ?? [];
-
-    await purchase.init(userId: api.user?.emailAddress, userName: api.user?.displayName);
 
     // avoid resetting projects if response is error (and thus contains zero projects)
     if (allProjectsRes.isError) {
@@ -48,16 +45,11 @@ class _HomeController with AppLogger {
 
     storage.setChosenProjects(existentProjects);
 
-    _configureSentryAndFirebase();
+    _configureSentry();
 
     await _maybeRequestReview();
 
     _logSession();
-
-    final hasSubscription = await purchase.checkSubscription();
-    if (!hasSubscription) {
-      _maybeShowSubscriptionBottomsheet();
-    }
 
     if (Platform.isAndroid) {
       await ShareIntentService().maybeHandleSharedUrl();
@@ -102,7 +94,7 @@ class _HomeController with AppLogger {
     }
   }
 
-  void _configureSentryAndFirebase() {
+  void _configureSentry() {
     final userId = api.user?.id ?? 'uknown-id';
     final email = api.user?.emailAddress ?? 'unknown-user';
     final org = api.organization;
@@ -111,12 +103,6 @@ class _HomeController with AppLogger {
       await sc.setUser(SentryUser(id: userId, email: email));
       await sc.setTag('org', org);
     });
-
-    if (useFirebase) {
-      FirebaseAnalytics.instance.setUserId(id: email);
-      FirebaseAnalytics.instance.setUserProperty(name: 'email', value: email);
-      FirebaseAnalytics.instance.setUserProperty(name: 'org', value: org);
-    }
   }
 
   /// Shows review dialog only the 5th time the app is opened.
@@ -127,7 +113,6 @@ class _HomeController with AppLogger {
 
       if (await inAppReview.isAvailable()) {
         await inAppReview.requestReview();
-        logAnalytics('app_review_popup', {});
       }
     }
 
@@ -228,27 +213,5 @@ class _HomeController with AppLogger {
     _getShortcuts();
   }
 
-  void _maybeShowSubscriptionBottomsheet() {
-    if (storage.hasSeenSubscriptionAddedBottomsheet) return;
 
-    OverlayService.bottomsheet(
-      title: 'Hi there!',
-      isDismissible: false,
-      isScrollControlled: true,
-      heightPercentage: .9,
-      builder: (_) => _SubscriptionAddedBottomsheet(
-        onRemoveAds: () {
-          AppRouter.popRoute();
-          _goToChooseSubscription();
-        },
-        onSkip: AppRouter.popRoute,
-      ),
-    );
-
-    storage.setHasSeenSubscriptionAddedBottomsheet();
-  }
-
-  void _goToChooseSubscription() {
-    AppRouter.goToChooseSubscription();
-  }
 }

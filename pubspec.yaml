@@ -1,5 +1,5 @@
 name: 'azure_devops'
-version: 3.9.0+99
+version: 3.9.99+101
 description: 'Azure DevOps unofficial mobile app'
 homepage: 'homepage'
 publish_to: 'none'
@@ -39,8 +39,6 @@ dependencies:
   collection: ^1.17.1
   html_editor_enhanced: ^2.6.0
   visibility_detector: ^0.4.0
-  firebase_core: ^4.2.1
-  firebase_analytics: ^12.0.4
   file_picker: ^10.2.0
   msal_auth:
    git:
@@ -51,8 +49,7 @@ dependencies:
    git:
     url: https://github.com/PurpleSoftSrl/flutter_theme_manager
     ref: main
-  google_mobile_ads: ^6.0.0
-  purchases_flutter: ^9.9.10
+  markdown: ^7.3.1
 
 dev_dependencies:
   flutter_test: { sdk: flutter }
@@ -64,9 +61,6 @@ dev_dependencies:
 
 
 flutter:
-  config:
-    enable-swift-package-manager: false # google_mobile_ads does not support SPM
-  
   uses-material-design: true
 
   assets:

@@ -31,38 +31,7 @@ class _SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          ValueListenableBuilder(
-            valueListenable: context.purchase.entitlementName,
-            builder: (_, entitlementName, _) => entitlementName.isNotEmpty
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      Text(
-                        'Current plan',
-                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(entitlementName),
-                      const SizedBox(height: 10),
-                    ],
-                  )
-                : const SizedBox(),
-          ),
           SectionHeader(text: 'App management'),
-          NavigationButton(
-            onTap: ctrl.goToChooseSubscription,
-            child: Row(
-              children: [
-                Icon(DevOpsIcons.crown),
-                const SizedBox(width: 20),
-                Text('Choose plan', style: context.textTheme.bodyLarge),
-                const Spacer(),
-                Icon(Icons.arrow_forward_ios),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
           NavigationButton(
             onTap: ctrl.seeChosenProjects,
             child: Row(

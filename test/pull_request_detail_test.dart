@@ -1,5 +1,4 @@
 import 'package:azure_devops/src/screens/pull_request_detail/base_pull_request_detail.dart';
-import 'package:azure_devops/src/services/ads_service.dart';
 import 'package:azure_devops/src/services/azure_api_service.dart';
 import 'package:azure_devops/src/services/storage_service.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +14,15 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Page building test', (t) async {
-    final app = AdsServiceWidget(
-      ads: AdsServiceMock(),
-      child: AzureApiServiceWidget(
-        api: AzureApiServiceMock(),
-        child: StorageServiceWidget(
-          storage: StorageServiceMock(),
-          child: MaterialApp(
-            theme: mockTheme,
-            onGenerateRoute: (_) => MaterialPageRoute(
-              builder: (_) => PullRequestDetailPage(),
-              settings: RouteSettings(arguments: (id: 1234, project: 'TestProject', repository: 'TestRepo')),
-            ),
+    final app = AzureApiServiceWidget(
+      api: AzureApiServiceMock(),
+      child: StorageServiceWidget(
+        storage: StorageServiceMock(),
+        child: MaterialApp(
+          theme: mockTheme,
+          onGenerateRoute: (_) => MaterialPageRoute(
+            builder: (_) => PullRequestDetailPage(),
+            settings: RouteSettings(arguments: (id: 1234, project: 'TestProject', repository: 'TestRepo')),
           ),
         ),
       ),

@@ -1,13 +1,12 @@
 part of pull_requests;
 
-class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
-  _PullRequestsController._(this.api, this.storage, this.args, this.ads) {
+class _PullRequestsController with FilterMixin, ApiErrorHelper {
+  _PullRequestsController._(this.api, this.storage, this.args) {
     if (args?.project != null) projectsFilter = {args!.project!};
   }
 
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
   final PullRequestArgs? args;
 
   final pullRequests = ValueNotifier<ApiResponse<List<PullRequest>?>?>(null);
@@ -34,11 +33,6 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
       _fillShortcutFilters();
     }
 
-    await _getDataAndAds();
-  }
-
-  Future<void> _getDataAndAds() async {
-    await getNewNativeAds(ads);
     await _getData();
   }
 
@@ -84,7 +78,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     statusFilter = status;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsStatusFilter(status.name);
@@ -96,7 +90,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     usersFilter = users;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsOpenedByFilter(users.map((p) => p.mailAddress!).toSet());
@@ -108,7 +102,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     reviewersFilter = users;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsAssignedToFilter(users.map((p) => p.mailAddress!).toSet());
@@ -120,7 +114,7 @@ class _PullRequestsController with FilterMixin, ApiErrorHelper, AdsMixin {
 
     pullRequests.value = null;
     projectsFilter = projects;
-    _getDataAndAds();
+    _getData();
 
     if (shouldPersistFilters) {
       filtersService.savePullRequestsProjectsFilter(projects.map((p) => p.name!).toSet());

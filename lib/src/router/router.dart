@@ -7,7 +7,6 @@ import 'package:azure_devops/src/router/share_extension_router.dart';
 import 'package:azure_devops/src/screens/board_detail/base_board_detail.dart';
 import 'package:azure_devops/src/screens/boards/base_boards.dart';
 import 'package:azure_devops/src/screens/choose_projects/base_choose_projects.dart';
-import 'package:azure_devops/src/screens/choose_subscription/base_choose_subscription.dart';
 import 'package:azure_devops/src/screens/commit_detail/base_commit_detail.dart';
 import 'package:azure_devops/src/screens/commits/base_commits.dart';
 import 'package:azure_devops/src/screens/create_or_edit_work_item/base_create_or_edit_work_item.dart';
@@ -78,7 +77,6 @@ class AppRouter {
   static const _workItemDetail = '/workitem-detail';
   static const _pullRequestDetail = '/pullrequest-detail';
   static const _createOrEditWorkItem = '/create-or-edit-workitem';
-  static const _chooseSubscription = '/choose-subscription';
   static const _savedQueries = '/saved-queries';
   static const _projectBoards = '/project-boards';
   static const _boardDetail = '/board-detail';
@@ -126,7 +124,6 @@ class AppRouter {
     _workItemDetail: (_) => WorkItemDetailPage(),
     _pullRequestDetail: (_) => PullRequestDetailPage(),
     _createOrEditWorkItem: (_) => CreateOrEditWorkItemPage(),
-    _chooseSubscription: (_) => ChooseSubscriptionPage(),
     _savedQueries: (_) => SavedQueriesPage(),
     _boardDetail: (_) => BoardDetailPage(),
     _sprintDetail: (_) => SprintDetailPage(),
@@ -219,8 +216,6 @@ class AppRouter {
 
   static Future<void> goToCreateOrEditWorkItem({CreateOrEditWorkItemArgs? args}) =>
       _goTo<CreateOrEditWorkItemArgs>(_createOrEditWorkItem, args: args);
-
-  static Future<void> goToChooseSubscription() => _goTo(_chooseSubscription);
 
   static CreateOrEditWorkItemArgs getCreateOrEditWorkItemArgs(BuildContext context) => _getArgs(context);
 

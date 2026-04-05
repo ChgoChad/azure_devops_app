@@ -80,8 +80,6 @@ class _PipelinesScreen extends StatelessWidget {
                 ],
               ),
         sliverBuilder: (pipelines) {
-          var adsIndex = 0;
-
           return SliverList(
             delegate: SliverChildBuilderDelegate(childCount: pipelines?.length ?? 0, (_, index) {
               final p = pipelines![index];
@@ -95,17 +93,6 @@ class _PipelinesScreen extends StatelessWidget {
                     if (ctrl.queuedPipelines > 0) Text('Queued pipelines: ${ctrl.queuedPipelines}'),
                     if (ctrl.inProgressPipelines > 0 || ctrl.queuedPipelines > 0) const SizedBox(height: 24),
                     PipelineListTile(pipe: p, onTap: () => ctrl.goToPipelineDetail(p), isLast: p == pipelines.last),
-                  ],
-                );
-              }
-
-              if (ctrl.shouldShowNativeAd(pipelines, p, adsIndex)) {
-                return Column(
-                  children: [
-                    PipelineListTile(pipe: p, onTap: () => ctrl.goToPipelineDetail(p), isLast: p == pipelines.last),
-                    CustomAdWidget(
-                      item: ctrl.ads.hasAmazonAds ? ctrl.amazonAds[adsIndex++] : ctrl.nativeAds[adsIndex++],
-                    ),
                   ],
                 );
               }

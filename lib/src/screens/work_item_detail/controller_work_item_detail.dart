@@ -2,13 +2,12 @@ part of work_item_detail;
 
 typedef _MentionGuidWithName = ({String guid, String name});
 
-class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixin {
-  _WorkItemDetailController._(this.args, this.api, this.storage, this.ads);
+class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger {
+  _WorkItemDetailController._(this.args, this.api, this.storage);
 
   final WorkItemDetailArgs args;
   final AzureApiService api;
   final StorageService storage;
-  final AdsService ads;
 
   final itemDetail = ValueNotifier<ApiResponse<WorkItemWithUpdates?>?>(null);
 
@@ -126,7 +125,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Work item not deleted');
     }
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Work item successfully deleted'));
+    OverlayService.snackbar('Work item successfully deleted');
 
     AppRouter.pop();
   }
@@ -202,17 +201,9 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
 
     final res = await api.addWorkItemComment(projectName: args.project, id: args.id, text: comment);
 
-    logAnalytics('add_work_item_comment', {
-      'work_item_type': itemDetail.value?.data?.item.fields.systemWorkItemType ?? 'unknown type',
-      'comment_length': comment.length,
-      'is_error': res.isError.toString(),
-    });
-
     if (res.isError) {
       return OverlayService.error('Error', description: 'Comment not added');
     }
-
-    await showInterstitialAd(ads);
 
     await init();
   }
@@ -238,8 +229,6 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Comment not deleted');
     }
 
-    await showInterstitialAd(ads);
-
     await init();
   }
 
@@ -264,8 +253,6 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Comment not edited');
     }
 
-    await showInterstitialAd(ads);
-
     await init();
   }
 
@@ -285,7 +272,7 @@ class _WorkItemDetailController with ShareMixin, FilterMixin, AppLogger, AdsMixi
       return OverlayService.error('Error', description: 'Attachment not added');
     }
 
-    await showInterstitialAd(ads, onDismiss: () => OverlayService.snackbar('Attachment successfully added'));
+    OverlayService.snackbar('Attachment successfully added');
 
     await init();
   }
