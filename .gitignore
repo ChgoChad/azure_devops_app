@@ -33,3 +33,4 @@ dart-define-production.json
 dart-define-production-local.json
 ios/Flutter/Environment*.xcconfig
 ios/prebuild.log
+app_config.json
