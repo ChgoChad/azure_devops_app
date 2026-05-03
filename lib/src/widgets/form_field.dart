@@ -79,7 +79,14 @@ class DevOpsFormField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label!, style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold)),
+          Text(
+            label!,
+            style: context.textTheme.labelSmall!.copyWith(
+              height: 1,
+              fontWeight: FontWeight.bold,
+              color: context.colorScheme.onSecondary,
+            ),
+          ),
           const SizedBox(height: 10),
           child,
         ],

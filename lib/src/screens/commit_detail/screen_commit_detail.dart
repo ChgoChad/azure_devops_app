@@ -1,4 +1,7 @@
+
 part of commit_detail;
+
+
 
 class _CommitDetailScreen extends StatelessWidget {
   const _CommitDetailScreen(this.ctrl, this.parameters);
@@ -8,13 +11,13 @@ class _CommitDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary);
+
     return AppPage<CommitWithChanges?>(
       init: ctrl.init,
       title: 'Commit detail',
       actions: [IconButton(onPressed: ctrl.shareDiff, icon: Icon(DevOpsIcons.share))],
       notifier: ctrl.commitChanges,
-      padding: const EdgeInsets.only(left: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       builder: (detail) {
         final author = detail!.commit.author;
         return DefaultTextStyle(
@@ -22,49 +25,89 @@ class _CommitDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(10), // Used literal double instead of AppTheme
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (author != null)
-                      Row(
-                        children: [
-                          Text('Author: ', style: labelStyle),
-                          Text(author.name!, overflow: TextOverflow.ellipsis),
-                          if (ctrl.api.organization.isNotEmpty && author.imageUrl != null) ...[
-                            const SizedBox(width: 20),
-                            MemberAvatar(
-                              // shows placeholder image for committers not inside the organization
-                              imageUrl: author.imageUrl!.startsWith(ctrl.api.basePath) ? null : author.imageUrl,
-                              userDescriptor: author.imageUrl!.split('/').last,
-                              radius: 30,
+                      DetailRow(
+                        title: 'Author:',
+                        icon: DevOpsIcons.profile,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (ctrl.api.organization.isNotEmpty && author.imageUrl != null)
+                              MemberAvatar(
+                                // shows placeholder image for committers not inside the organization
+                                imageUrl: author.imageUrl!.startsWith(ctrl.api.basePath) ? null : author.imageUrl,
+                                userDescriptor: author.imageUrl!.split('/').last,
+                                radius: 30,
+                              ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(author.name!, overflow: TextOverflow.ellipsis),
                             ),
-                            const SizedBox(width: 10),
+                            Text(author.date!.minutesAgo),
                           ],
-                          const Spacer(),
-                          Text(author.date!.minutesAgo),
-                        ],
+                        ),
                       ),
                     const SizedBox(height: 20),
-                    ProjectChip(onTap: ctrl.goToProject, projectName: ctrl.args.project),
-                    RepositoryChip(onTap: ctrl.goToRepo, repositoryName: ctrl.args.repository),
+                    DetailRow(
+                      title: 'Project:',
+                      icon: DevOpsIcons.project,
+                      child: ProjectChip(onTap: ctrl.goToProject, projectName: ctrl.args.project),
+                    ),
+                    const SizedBox(height: 8),
+                    DetailRow(
+                      title: 'Repository:',
+                      icon: DevOpsIcons.repository,
+                      child: RepositoryChip(onTap: ctrl.goToRepo, repositoryName: ctrl.args.repository),
+                    ),
                     const SizedBox(height: 10),
-                    Text('Message', style: labelStyle),
-                    SelectableText(detail.commit.comment!),
+                    DetailRow(
+                      title: 'Message:',
+                      icon: Icons.subject,
+                      child: SelectableText(detail.commit.comment!),
+                    ),
+                    DetailRow(
+                      title: 'CommitId:',
+                      icon: DevOpsIcons.commit,
+                      child: SelectableText(ctrl.args.commitId),
+                    ),
                     const SizedBox(height: 20),
-                    Text('CommitId', style: labelStyle),
-                    SelectableText(ctrl.args.commitId),
-                    const SizedBox(height: 20),
-                    TextTitleDescription(title: 'Committed at:', description: author?.date?.toSimpleDate() ?? '-'),
+                    DetailRow(
+                      title: 'Commit at:',
+                      icon: Icons.calendar_month,
+                      child: Text(author?.date?.toSimpleDate() ?? '-'),
+                    ),
                     if (detail.commit.tags?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 20),
-                      Text('Tags: ', style: labelStyle),
-                      for (final tag in detail.commit.tags!)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: TagChip(tag: tag),
+                      DetailRow(
+                        title: 'Tags:',
+                        icon: Icons.local_offer_outlined,
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final tag in detail.commit.tags!)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: context.colorScheme.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: Text(tag.name.trim(),
+                                    style: context.textTheme.titleSmall!
+                                        .copyWith(height: 1, color: context.colorScheme.primary)),
+                              ),
+                          ],
                         ),
+                      ),
                     ],
                   ],
                 ),

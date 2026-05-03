@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="envs">
+      <entry key="MSAL_CLIENT_ID" value="fc3f2dc9-260a-4157-8d55-3a0e932df8d4" />
+      <entry key="MSAL_PROD_PATH" value="/QG8o4quMfqXiTsA9PMn9DbcPBVo=" />
+      <entry key="MSAL_REDIRECT_URI" value="msauth://io.purplesoft.azuredevops/QG8o4quMfqXiTsA9PMn9DbcPBVo%3D" />
+    </option>
+    <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

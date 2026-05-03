@@ -8,7 +8,11 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = context.textTheme.bodySmall!.copyWith(height: 1, fontWeight: FontWeight.bold);
+    final style = context.textTheme.bodySmall!.copyWith(
+      height: 1,
+      fontWeight: FontWeight.bold,
+      color: context.colorScheme.onSecondary,
+    );
     return AppPage<bool>(
       init: ctrl.init,
       title: ctrl.args.id == null ? 'Create work item' : 'Edit work item #${ctrl.args.id}',
@@ -34,7 +38,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           if (!ctrl.isEditing) ...[
             Row(
               children: [
-                Text('Project:', style: style),
+                SizedBox(
+                  width: 120,
+                  child: Text('Project:', textAlign: TextAlign.right, style: style),
+                ),
                 const SizedBox(width: 10),
                 FilterMenu<Project>(
                   title: 'Project',
@@ -52,10 +59,22 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
           ],
+          DevOpsFormField(
+            initialValue: ctrl.newWorkItemTitle,
+            onChanged: ctrl.onTitleChanged,
+            label: 'Title',
+            formFieldKey: ctrl.titleFieldKey,
+            textCapitalization: TextCapitalization.sentences,
+            textInputAction: TextInputAction.next,
+          ),
+          const SizedBox(height: 20),
           if (ctrl.newWorkItemProject != ctrl.projectAll) ...[
             Row(
               children: [
-                Text('Type:', style: style),
+                SizedBox(
+                  width: 80,
+                  child: Text('Type:', textAlign: TextAlign.right, style: style),
+                ),
                 const SizedBox(width: 10),
                 WorkItemTypeFilterMenu(
                   title: 'Type',
@@ -74,7 +93,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           if (ctrl.isEditing) ...[
             Row(
               children: [
-                Text('Status:', style: style),
+                SizedBox(
+                  width: 80,
+                  child: Text('Status:', textAlign: TextAlign.right, style: style),
+                ),
                 const SizedBox(width: 10),
                 FilterMenu<WorkItemState>(
                   title: 'Status',
@@ -91,7 +113,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           ],
           Row(
             children: [
-              Text('Assigned to:', style: style),
+              SizedBox(
+                width: 80,
+                child: Text('Assigned to:', textAlign: TextAlign.right, style: style),
+              ),
               const SizedBox(width: 10),
               Flexible(
                 child: FilterMenu<GraphUser>(
@@ -111,7 +136,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           if (ctrl.shouldShowArea())
             Row(
               children: [
-                Text('Area:', style: style),
+                SizedBox(
+                  width: 80,
+                  child: Text('Area:', textAlign: TextAlign.right, style: style),
+                ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: FilterMenu<AreaOrIteration?>.custom(
@@ -133,7 +161,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
           if (ctrl.shouldShowIteration())
             Row(
               children: [
-                Text('Iteration:', style: style),
+                SizedBox(
+                  width: 80,
+                  child: Text('Iteration:', textAlign: TextAlign.right, style: style),
+                ),
                 const SizedBox(width: 10),
                 Flexible(
                   child: FilterMenu<AreaOrIteration?>.custom(
@@ -158,7 +189,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
-                  child: Text('Tags:', style: style),
+                  child: SizedBox(
+                    width: 80,
+                    child: Text('Tags:', textAlign: TextAlign.right, style: style),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
@@ -208,7 +242,10 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 6),
-                child: Text('Links:', style: style),
+                child: SizedBox(
+                  width: 80,
+                  child: Text('Links:', textAlign: TextAlign.right, style: style),
+                ),
               ),
               const SizedBox(width: 10),
               Flexible(
@@ -256,15 +293,6 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          DevOpsFormField(
-            initialValue: ctrl.newWorkItemTitle,
-            onChanged: ctrl.onTitleChanged,
-            label: 'Title',
-            formFieldKey: ctrl.titleFieldKey,
-            textCapitalization: TextCapitalization.sentences,
-            textInputAction: TextInputAction.next,
-          ),
-          const SizedBox(height: 20),
           ValueListenableBuilder(
             valueListenable: ctrl.isGettingFields,
             builder: (context, isGettingFields, _) => isGettingFields
@@ -277,14 +305,19 @@ class _CreateOrEditWorkItemScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (entry.value.isNotEmpty &&
-                                (entry.value.length > 1 || entry.value.single.name != entry.key))
+                                (entry.value.length > 1 || entry.value.single.name != entry.key)) ...[
                               Padding(
                                 padding: const EdgeInsets.only(top: 12, bottom: 8),
                                 child: Text(
                                   entry.key,
-                                  style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+                                  style: context.textTheme.bodyLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null,
+                                  ),
                                 ),
                               ),
+                              const Divider(),
+                            ],
                             for (final field in entry.value)
                               switch (field.type) {
                                 'html' => _HtmlFormField(field: field, ctrl: ctrl),

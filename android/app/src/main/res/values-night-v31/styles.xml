@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@color/splash</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/transparent_image</item>
+    </style>
+</resources>

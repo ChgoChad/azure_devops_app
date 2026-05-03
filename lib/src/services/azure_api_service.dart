@@ -1937,7 +1937,8 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
     final editRes = await _patch(
       prPath,
       body: {
-        'isDraft': ?isDraft,
+        // ignore: use_null_aware_elements
+        if (isDraft != null) 'isDraft': isDraft,
         if (status != null) 'status': status.name,
         if (status == PullRequestStatus.completed) 'lastMergeSourceCommit': {'commitId': commitId},
         if (autocomplete != null)
@@ -1991,7 +1992,12 @@ class AzureApiServiceImpl with AppLogger implements AzureApiService {
 
     final prPath = threadId == null ? '$threadsPath?$_apiVersion' : '$threadsPath/$threadId/comments?$_apiVersion';
 
-    final commentBody = {'content': text, 'commentType': 1, 'parentCommentId': ?parentCommentId};
+    final commentBody = {
+      'content': text,
+      'commentType': 1,
+      // ignore: use_null_aware_elements
+      if (parentCommentId != null) 'parentCommentId': parentCommentId,
+    };
 
     final fileStart = isRightFile ? 'rightFileStart' : 'leftFileStart';
     final fileEnd = isRightFile ? 'rightFileEnd' : 'leftFileEnd';

@@ -1,15 +1,15 @@
 # Az DevOps
 
 Unofficial [Azure DevOps](https://azure.microsoft.com/en-us/products/devops) mobile app.
-</br>
-</br>
-<p align="center">
-    <img width="215" src="https://play-lh.googleusercontent.com/n3wNhuHuo8YLsLwqCLf4Cqg85vZZ66VJs8bUB1QpTCTv_EUc7HF-8de8-Hm7V75e_0I=w5120-h2880">
-    <img width="215" src="https://play-lh.googleusercontent.com/vbFFjIim-6t_Q1REZr2RKBxLON2N_cALZ56WR0laWD_Ru3Yr7o8eSmOKn4pQZuhWZA=w5120-h2880">
-    <img width="215" src="https://play-lh.googleusercontent.com/5Hbfe8OP7YCYaIu5I6RLZ3iAlIQ-YRSGWVF46wwhOqzFE3wfdhIH5JXdNOC0uqQ4b6I=w5120-h2880">
+<br/>
+<br/>
+<p>
+    <img width="215" src="https://play-lh.googleusercontent.com/n3wNhuHuo8YLsLwqCLf4Cqg85vZZ66VJs8bUB1QpTCTv_EUc7HF-8de8-Hm7V75e_0I=w5120-h2880" alt="" />
+    <img width="215" src="https://play-lh.googleusercontent.com/vbFFjIim-6t_Q1REZr2RKBxLON2N_cALZ56WR0laWD_Ru3Yr7o8eSmOKn4pQZuhWZA=w5120-h2880"  alt="" />
+    <img width="215" src="https://play-lh.googleusercontent.com/5Hbfe8OP7YCYaIu5I6RLZ3iAlIQ-YRSGWVF46wwhOqzFE3wfdhIH5JXdNOC0uqQ4b6I=w5120-h2880"  alt="" />
 </p>
-</br>
-</br>
+<br/>
+<br/>
 
 
 Features:
@@ -19,7 +19,7 @@ Features:
 - See and manage your work items
 - See and manage your pull requests
 
-Follow [this guide](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to generate a new Personal Acces Token. Be sure to select 'All accessible organizations', otherwise you will have to manually input the organization name.
+Follow [this guide](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to generate a new Personal Access Token. Be sure to select 'All accessible organizations', otherwise you will have to manually input the organization name.
 
 # App Downloads
 
@@ -31,7 +31,7 @@ To try the app you can download it from your favorite app store:
 
 If you're new to Flutter the first thing you'll need is to follow the [setup instructions](https://flutter.dev/docs/get-started/install).
 
-Once Flutter is setup:
+Once Flutter is set up:
  * `flutter channel stable`
  * `flutter run`
 

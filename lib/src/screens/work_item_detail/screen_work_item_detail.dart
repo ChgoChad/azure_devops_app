@@ -1,5 +1,15 @@
 part of work_item_detail;
 
+IconData _getGroupIcon(String? group) {
+  return switch (group?.toLowerCase()) {
+    'planning' => DevOpsIcons.sprint,
+    'classification' => Icons.category_outlined,
+    'development' => DevOpsIcons.commit,
+    'system' => DevOpsIcons.settings,
+    _ => Icons.article_outlined,
+  };
+}
+
 class _WorkItemDetailScreen extends StatelessWidget {
   const _WorkItemDetailScreen(this.ctrl, this.parameters);
 
@@ -54,137 +64,223 @@ class _WorkItemDetailScreen extends StatelessWidget {
                     children: [
                       WorkItemTypeIcon(type: wType),
                       const SizedBox(width: 20),
-                      Text(detail.fields.systemWorkItemType),
+                      Text(detail.fields.systemWorkItemType.toUpperCase()),
                       const SizedBox(width: 10),
-                      Text(detail.id.toString()),
+                      Text('#${detail.id}'),
                       const Spacer(),
                       const SizedBox(width: 10),
-                      Text(
-                        detail.fields.systemState,
-                        style: context.textTheme.titleSmall!.copyWith(
-                          color: state == null ? null : Color(int.parse(state.color, radix: 16)).withValues(alpha: 1),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: state == null || state.color.isEmpty
+                              ? context.colorScheme.secondaryContainer
+                              : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: state == null || state.color.isEmpty
+                                ? Colors.transparent
+                                : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.5),
+                          ),
+                        ),
+                        child: Text(
+                          detail.fields.systemState.toUpperCase(),
+                          style: context.textTheme.labelSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: state == null || state.color.isEmpty
+                                ? null
+                                : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 1),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
-                  if (detail.fields.systemCreatedBy != null)
-                    Row(
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(AppTheme.radius),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextTitleDescription(
-                          title: 'Created by:',
-                          description: detail.fields.systemCreatedBy!.displayName!,
+                        Row(
+                          children: [
+                            Icon(Icons.subject, size: 14, color: context.colorScheme.primary),
+                            const SizedBox(width: 4),
+                            Text('Title',
+                                style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                          ],
                         ),
-                        if (ctrl.api.organization.isNotEmpty) ...[
-                          const SizedBox(width: 10),
-                          MemberAvatar(userDescriptor: detail.fields.systemCreatedBy!.descriptor, radius: 30),
-                          const SizedBox(width: 10),
-                        ],
-                        const Spacer(),
-                        Text(detail.fields.systemCreatedDate!.minutesAgo),
-                      ],
-                    ),
-                  const SizedBox(height: 20),
-                  ProjectChip(onTap: ctrl.goToProject, projectName: detail.fields.systemTeamProject),
-                  const SizedBox(height: 8),
-                  TextTitleDescription(title: 'Area:', description: detail.fields.systemAreaPath),
-                  const SizedBox(height: 8),
-                  TextTitleDescription(title: 'Iteration:', description: detail.fields.systemIterationPath),
-                  const SizedBox(height: 20),
-                  Text('Title', style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
-                  SelectableText(detail.fields.systemTitle),
-                  if (detail.fields.systemTags != null) ...[
-                    const SizedBox(height: 20),
-                    Text('Tags', style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
-                    const SizedBox(height: 5),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final tag in detail.fields.systemTags!.split(';'))
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: context.colorScheme.secondaryContainer,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Text(tag.trim(), style: context.textTheme.titleSmall!.copyWith(height: 1)),
-                          ),
-                      ],
-                    ),
-                  ],
-                  if (detail.workItemLinks.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      'Links',
-                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                    ),
-                    const SizedBox(height: 5),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final link in detail.workItemLinks)
-                          Builder(
-                            builder: (context) {
-                              final hasComment = (link.attributes?.comment ?? '').isNotEmpty;
-                              return GestureDetector(
-                                onTap: () => ctrl.goToWorkItemDetail(link),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: context.colorScheme.secondaryContainer,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        link.toReadableString(),
-                                        style: context.textTheme.titleSmall!.copyWith(height: 1),
-                                      ),
-                                      if (hasComment) ...[
-                                        const SizedBox(width: 8),
-                                        DevOpsPopupMenu(
-                                          tooltip: link.toReadableString(),
-                                          items: () => [PopupItem(text: link.attributes?.comment ?? '', onTap: () {})],
-                                          offset: Offset(0, 20),
-                                          child: Icon(Icons.forum_outlined, size: 16),
-                                        ),
-                                      ],
-                                    ],
+                        SelectableText(
+                          detail.fields.systemTitle,
+                          style: context.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        if (detail.fields.systemCreatedBy != null)
+                          DetailRow(
+                            title: 'Created by:',
+                            icon: DevOpsIcons.profile,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (ctrl.api.organization.isNotEmpty)
+                                  MemberAvatar(userDescriptor: detail.fields.systemCreatedBy!.descriptor, radius: 30),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: SelectableText(
+                                    detail.fields.systemCreatedBy!.displayName ?? '',
+                                    style: context.textTheme.titleSmall,
+                                    maxLines: 1,
                                   ),
                                 ),
-                              );
-                            },
+                                Text(detail.fields.systemCreatedDate?.minutesAgo ?? ''),
+                              ],
+                            ),
                           ),
-                      ],
-                    ),
-                  ],
-                  if (detail.fields.systemAssignedTo != null) ...[
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        TextTitleDescription(
-                          title: 'Assigned to:',
-                          description: detail.fields.systemAssignedTo!.displayName!,
+                        const SizedBox(height: 20),
+                        DetailRow(
+                          title: 'Project:',
+                          icon: DevOpsIcons.project,
+                          child: GestureDetector(
+                            onTap: ctrl.goToProject,
+                            child: Text(
+                              detail.fields.systemTeamProject,
+                              style: context.textTheme.titleSmall!.copyWith(decoration: TextDecoration.underline),
+                            ),
+                          ),
                         ),
-                        const SizedBox(width: 20),
-                        MemberAvatar(userDescriptor: detail.fields.systemAssignedTo!.descriptor, radius: 30),
+                        const SizedBox(height: 8),
+                        DetailRow(
+                          title: 'Area:',
+                          icon: Icons.account_tree_outlined,
+                          child: SelectableText(detail.fields.systemAreaPath, style: context.textTheme.titleSmall),
+                        ),
+                        const SizedBox(height: 8),
+                        DetailRow(
+                          title: 'Iteration:',
+                          icon: DevOpsIcons.sprint,
+                          child: SelectableText(detail.fields.systemIterationPath, style: context.textTheme.titleSmall),
+                        ),
+                        if (detail.fields.systemTags != null) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Icon(Icons.local_offer_outlined, size: 14, color: context.colorScheme.primary),
+                              const SizedBox(width: 4),
+                              Text('Tags',
+                                  style:
+                                      context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final tag in detail.fields.systemTags!.split(';'))
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: context.colorScheme.primary.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  child: Text(tag.trim(),
+                                      style: context.textTheme.titleSmall!
+                                          .copyWith(height: 1, color: context.colorScheme.primary)),
+                                ),
+                            ],
+                          ),
+                        ],
+                        if (detail.workItemLinks.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Icon(DevOpsIcons.link, size: 14, color: context.colorScheme.primary),
+                              const SizedBox(width: 4),
+                              Text('Links',
+                                  style:
+                                      context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (final link in detail.workItemLinks)
+                                Builder(
+                                  builder: (context) {
+                                    final hasComment = (link.attributes?.comment ?? '').isNotEmpty;
+                                    return GestureDetector(
+                                      onTap: () => ctrl.goToWorkItemDetail(link),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: context.colorScheme.primary.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(100),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(DevOpsIcons.link, size: 14, color: context.colorScheme.primary),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              link.toReadableString(),
+                                              style: context.textTheme.titleSmall!
+                                                  .copyWith(height: 1, color: context.colorScheme.primary),
+                                            ),
+                                            if (hasComment) ...[
+                                              const SizedBox(width: 8),
+                                              DevOpsPopupMenu(
+                                                tooltip: link.toReadableString(),
+                                                items: () =>
+                                                    [PopupItem(text: link.attributes?.comment ?? '', onTap: () {})],
+                                                offset: Offset(0, 20),
+                                                child: Icon(Icons.forum_outlined, size: 16),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                            ],
+                          ),
+                        ],
+                        if (detail.fields.systemAssignedTo != null) ...[
+                          const SizedBox(height: 20),
+                          DetailRow(
+                            title: 'Assigned to:',
+                            icon: DevOpsIcons.profile,
+                            child: Row(
+                              children: [
+                                if (ctrl.api.organization.isNotEmpty)
+                                  MemberAvatar(userDescriptor: detail.fields.systemAssignedTo!.descriptor, radius: 30),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: SelectableText(
+                                    detail.fields.systemAssignedTo!.displayName ?? '',
+                                    style: context.textTheme.titleSmall,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
-                  ],
+                  ),
                   for (final entry in ctrl.fieldsToShow.entries)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (ctrl.shouldShowGroupLabel(group: entry.key)) ...[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 24),
-                            child: Text(
-                              entry.key,
-                              style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                            ),
+                          SectionHeader.withIcon(
+                            text: entry.key,
+                            icon: _getGroupIcon(entry.key),
                           ),
                           const Divider(),
                         ],
@@ -241,31 +337,33 @@ class _WorkItemDetailScreen extends StatelessWidget {
                       ],
                     ),
                   const SizedBox(height: 40),
-                  TextTitleDescription(
+                  DetailRow(
                     title: 'Created at:',
-                    description: detail.fields.systemCreatedDate!.toSimpleDate(),
+                    icon: Icons.calendar_month,
+                    child: Text(detail.fields.systemCreatedDate?.toSimpleDate() ?? '', style: context.textTheme.titleSmall),
                   ),
                   const SizedBox(height: 10),
-                  TextTitleDescription(
-                    title: 'Change date:',
-                    description: detail.fields.systemChangedDate.toSimpleDate(),
+                  DetailRow(
+                    title: 'Modified at:',
+                    icon: Icons.edit_calendar,
+                    child: Text(detail.fields.systemChangedDate.toSimpleDate(), style: context.textTheme.titleSmall),
                   ),
                   const SizedBox(height: 40),
                   Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SectionHeader.noMargin(text: 'History'),
+                          Expanded(child: SectionHeader.noMargin(text: 'History', icon: Icons.history)),
                           IconButton(
                             padding: EdgeInsets.zero,
                             iconSize: 20,
-                            constraints: BoxConstraints(maxWidth: 20),
+                            constraints: const BoxConstraints(),
                             onPressed: ctrl.toggleShowUpdatesReversed,
-                            icon: Icon(Icons.swap_vert),
+                            icon: const Icon(Icons.swap_vert),
                           ),
                         ],
                       ),
+                      const Divider(),
                       const SizedBox(height: 5),
                       VisibilityDetector(
                         key: ctrl.historyKey,
