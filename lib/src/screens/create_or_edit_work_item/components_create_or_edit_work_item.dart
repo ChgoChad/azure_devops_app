@@ -14,7 +14,11 @@ class _HtmlFormField extends StatelessWidget {
       children: [
         Text(
           ctrl.getFieldName(field),
-          style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
+          style: context.textTheme.labelSmall!.copyWith(
+            height: 1,
+            fontWeight: FontWeight.bold,
+            color: context.colorScheme.onSecondary,
+          ),
         ),
         const SizedBox(height: 10),
         DevOpsHtmlEditor(
@@ -70,7 +74,11 @@ class _UserFormField extends StatelessWidget {
       children: [
         Text(
           ctrl.getFieldName(field),
-          style: context.textTheme.labelSmall!.copyWith(height: 1, fontWeight: FontWeight.bold),
+          style: context.textTheme.labelSmall!.copyWith(
+            height: 1,
+            fontWeight: FontWeight.bold,
+            color: context.colorScheme.onSecondary,
+          ),
         ),
         FilterMenu<GraphUser>(
           title: formField?.text ?? '-',

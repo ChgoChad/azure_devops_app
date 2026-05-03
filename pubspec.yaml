@@ -1,12 +1,12 @@
 name: 'azure_devops'
-version: 3.9.99+101
+version: 3.9.9999
 description: 'Azure DevOps unofficial mobile app'
 homepage: 'homepage'
 publish_to: 'none'
 
 environment:
-  sdk: '>=3.9.0 <4.0.0'
-  flutter: '>=3.38.0'
+  sdk: '>=3.11.0 <4.0.0'
+  flutter: '>=3.41.0'
 
 dependencies:
   flutter: { sdk: flutter }

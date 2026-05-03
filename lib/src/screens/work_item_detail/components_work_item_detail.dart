@@ -1,5 +1,6 @@
 part of work_item_detail;
 
+
 class _History extends StatelessWidget {
   const _History({required this.updates, required this.ctrl});
 
@@ -45,8 +46,14 @@ class _SimpleUpdateWidget extends StatelessWidget {
             children: [
               MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
               const SizedBox(width: 10),
-              Text(update.updatedBy.displayName, style: context.textTheme.titleSmall),
-              const Spacer(),
+              Expanded(
+                child: Text(
+                  update.updatedBy.displayName,
+                  style: context.textTheme.titleSmall,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 10),
               Text(update.updateDate.minutesAgo),
             ],
           ),
@@ -117,16 +124,20 @@ class _CommentWidget extends StatelessWidget {
                 children: [
                   MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
                   const SizedBox(width: 10),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: update.updatedBy.displayName),
-                        TextSpan(text: '  ${update.isEdited ? '(edited)' : ''}', style: context.textTheme.labelSmall),
-                        TextSpan(text: '  ${update.updateDate.minutesAgo}', style: context.textTheme.labelSmall),
-                      ],
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: update.updatedBy.displayName),
+                          TextSpan(text: '  ${update.isEdited ? '(edited)' : ''}', style: context.textTheme.labelSmall),
+                          TextSpan(text: '  ${update.updateDate.minutesAgo}', style: context.textTheme.labelSmall),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 10),
                   DevOpsPopupMenu(
                     tooltip: 'work item comment',
                     offset: const Offset(0, 20),
@@ -243,8 +254,14 @@ class _LinkWidget extends StatelessWidget {
             children: [
               MemberAvatar(userDescriptor: update.updatedBy.descriptor, radius: 15),
               const SizedBox(width: 10),
-              Text(update.updatedBy.displayName, style: context.textTheme.titleSmall),
-              const Spacer(),
+              Expanded(
+                child: Text(
+                  update.updatedBy.displayName,
+                  style: context.textTheme.titleSmall,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 10),
               Text(update.updateDate.minutesAgo),
             ],
           ),

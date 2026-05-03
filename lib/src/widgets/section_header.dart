@@ -40,15 +40,19 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget body = Text(
       text,
-      style: context.textTheme.headlineSmall!.copyWith(height: textHeight),
+      style: context.textTheme.headlineSmall!.copyWith(
+        height: textHeight,
+        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : null,
+      ),
       overflow: TextOverflow.ellipsis,
     );
 
     if (icon != null) {
       body = Row(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: mainAxisAlignment,
         children: [
-          Icon(icon, size: iconSize),
+          Icon(icon, size: iconSize, color: context.colorScheme.secondary),
           const SizedBox(width: 12),
           Flexible(child: body),
         ],
@@ -56,7 +60,7 @@ class SectionHeader extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.only(top: marginTop, bottom: 12),
+      padding: EdgeInsets.only(top: marginTop, bottom: 4),
       child: body,
     );
   }

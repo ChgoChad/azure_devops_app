@@ -35,7 +35,9 @@ class _WorkItemListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = context.textTheme.bodySmall!;
+    final subtitleStyle = context.textTheme.bodySmall!.copyWith(
+      color: context.colorScheme.onSecondary.withValues(alpha: context.colorScheme.brightness == Brightness.dark ? 0.6 : 1),
+    );
     final api = context.api;
     final wt = api.workItemTypes[item.fields.systemTeamProject]?.firstWhereOrNull(
       (t) => t.name == item.fields.systemWorkItemType,
@@ -70,10 +72,28 @@ class _WorkItemListTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  item.fields.systemState,
-                  style: subtitleStyle.copyWith(
-                    color: state == null ? null : Color(int.parse(state.color, radix: 16)).withValues(alpha: 1),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: state == null || state.color.isEmpty
+                        ? context.colorScheme.secondaryContainer
+                        : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                      color: state == null || state.color.isEmpty
+                          ? Colors.transparent
+                          : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Text(
+                    item.fields.systemState.toUpperCase(),
+                    style: context.textTheme.labelSmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      color: state == null || state.color.isEmpty
+                          ? null
+                          : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 1),
+                    ),
                   ),
                 ),
               ],
@@ -87,7 +107,7 @@ class _WorkItemListTile extends StatelessWidget {
                       child: Row(
                         children: [
                           Text('#${item.id}', style: subtitleStyle),
-                          Text(' in ', style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
+                          Text(' in ', style: subtitleStyle),
                           Flexible(
                             child: Text(
                               item.fields.systemTeamProject,

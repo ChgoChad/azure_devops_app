@@ -105,6 +105,9 @@ class _WorkItemCard extends StatelessWidget {
       (t) => t.name == item.fields.systemWorkItemType,
     );
 
+    final state = context.api.workItemStates[item.fields.systemTeamProject]?[item.fields.systemWorkItemType]
+        ?.firstWhereOrNull((t) => t.name == item.fields.systemState);
+
     final hasAssignee = item.fields.systemAssignedTo?.descriptor != null;
     final hasComments = (item.fields.systemCommentCount ?? 0) > 0;
 
@@ -224,7 +227,30 @@ class _WorkItemCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(item.fields.systemChangedDate.minutesAgo, style: subtitleStyle),
                 const SizedBox(height: 16),
-                Text(item.fields.systemState, style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: state == null || state.color.isEmpty
+                        ? context.colorScheme.secondaryContainer
+                        : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                      color: state == null || state.color.isEmpty
+                          ? Colors.transparent
+                          : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Text(
+                    item.fields.systemState.toUpperCase(),
+                    style: context.textTheme.labelSmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      color: state == null || state.color.isEmpty
+                          ? null
+                          : Color(int.parse(state.color.replaceFirst('#', ''), radix: 16)).withValues(alpha: 1),
+                    ),
+                  ),
+                ),
               ],
             ),
           ],

@@ -9,7 +9,7 @@ class ProjectChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _InternalChip(onTap: onTap, title: 'Project:', text: projectName);
+    return _InternalChip(onTap: onTap, text: projectName);
   }
 }
 
@@ -21,15 +21,14 @@ class RepositoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _InternalChip(onTap: onTap, title: 'Repository:', text: repositoryName);
+    return _InternalChip(onTap: onTap, text: repositoryName);
   }
 }
 
 class _InternalChip extends StatelessWidget {
-  const _InternalChip({required this.onTap, required this.text, required this.title});
+  const _InternalChip({required this.onTap, required this.text});
 
   final VoidCallback onTap;
-  final String title;
   final String? text;
 
   @override
@@ -39,8 +38,6 @@ class _InternalChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
-          const SizedBox(width: 8),
           Flexible(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),

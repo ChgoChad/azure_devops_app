@@ -44,7 +44,6 @@ class _AddCommentFieldState extends State<AddCommentField> with SingleTickerProv
   void dispose() {
     _controller.dispose();
     widget.isVisible.removeListener(_listener);
-    widget.isVisible.dispose();
     super.dispose();
   }
 

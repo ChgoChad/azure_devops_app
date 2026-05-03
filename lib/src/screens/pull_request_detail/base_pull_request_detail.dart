@@ -32,8 +32,6 @@ import 'package:azure_devops/src/widgets/pipeline_in_progress_animated_icon.dart
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:azure_devops/src/widgets/project_and_repo_chips.dart';
 import 'package:azure_devops/src/widgets/pull_request_comment_card.dart';
-import 'package:azure_devops/src/widgets/section_header.dart';
-import 'package:azure_devops/src/widgets/text_title_description.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';

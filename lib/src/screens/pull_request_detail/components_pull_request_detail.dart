@@ -1,5 +1,51 @@
 part of pull_request_detail;
 
+class _LocalDetailRow extends StatelessWidget {
+  const _LocalDetailRow({
+    required this.title,
+    required this.child,
+    this.icon,
+  });
+
+  final String title;
+  final Widget child;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 110,
+          child: Row(
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 14, color: context.colorScheme.primary),
+                const SizedBox(width: 4),
+              ],
+              Expanded(
+                child: Text(
+                  title,
+                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(child: child),
+      ],
+    );
+  }
+}
+
+
+
+
 class _PullRequestActions extends StatelessWidget {
   const _PullRequestActions({required this.ctrl});
 
@@ -94,46 +140,111 @@ class _PullRequestOverview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Icon(Icons.subject, size: 14, color: context.colorScheme.primary),
+                  const SizedBox(width: 4),
+                  Text('Title',
+                      style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                ],
+              ),
+              SelectableText(
+                pr.title,
+                style: context.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
               if (ctrl.hasAutoCompleteOn) ...[
-                Text(
-                  'Auto-complete: ${prWithDetails.pr.autoCompleteSetBy!.displayName} set this pull request to automatically complete when all requirements are met.',
+                _LocalDetailRow(
+                  title: 'Auto-complete:',
+                  icon: DevOpsIcons.autocomplete,
+                  child: Text(
+                    '${prWithDetails.pr.autoCompleteSetBy!.displayName} set this pull request to automatically complete when all requirements are met.',
+                  ),
                 ),
                 const SizedBox(height: 10),
               ],
-              TextTitleDescription(title: 'Id: ', description: pr.pullRequestId.toString()),
-              Row(
-                children: [
-                  Text(
-                    'Status: ',
-                    style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
-                  ),
-                  Text(ctrl.prStatus, style: context.textTheme.titleSmall!.copyWith(color: pr.status.color)),
-                  if (ctrl.isMerging)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: InProgressPipelineIcon(child: Icon(Icons.refresh_rounded, color: pr.status.color)),
-                    ),
-                ],
+              _LocalDetailRow(
+                title: 'Id:',
+                icon: Icons.tag,
+                child: Text(pr.pullRequestId.toString()),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              _LocalDetailRow(
+                title: 'Status:',
+                icon: Icons.info_outline,
+                child: Row(
+                  children: [
+                   Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: pr.status.color.withValues(alpha: .1),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(ctrl.prStatus, style: context.textTheme.titleSmall!.copyWith(color: pr.status.color)),
+                          if (ctrl.isMerging)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: InProgressPipelineIcon(
+                                child: Icon(Icons.refresh_rounded, color: pr.status.color, size: 14),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
               Row(
                 children: [
-                  TextTitleDescription(title: 'Created by: ', description: pr.createdBy.displayName),
-                  const SizedBox(width: 20),
-                  MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
-                  const Spacer(),
+                  Expanded(
+                    child: _LocalDetailRow(
+                      title: 'Created by:',
+                      icon: DevOpsIcons.profile,
+                      child: Row(
+                        children: [
+                          MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              pr.createdBy.displayName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
                   Text(pr.creationDate.minutesAgo),
                 ],
               ),
               const SizedBox(height: 20),
-              ProjectChip(onTap: ctrl.goToProject, projectName: pr.repository.project.name),
-              RepositoryChip(onTap: ctrl.goToRepo, repositoryName: pr.repository.name),
-              Wrap(
-                children: [
-                  TextTitleDescription(title: 'From: ', description: pr.sourceBranch),
-                  const SizedBox(width: 20),
-                  TextTitleDescription(title: 'To: ', description: pr.targetBranch),
-                ],
+              _LocalDetailRow(
+                title: 'Project:',
+                icon: DevOpsIcons.project,
+                child: ProjectChip(onTap: ctrl.goToProject, projectName: pr.repository.project.name),
+              ),
+              const SizedBox(height: 8),
+              _LocalDetailRow(
+                title: 'Repository:',
+                icon: DevOpsIcons.repository,
+                child: RepositoryChip(onTap: ctrl.goToRepo, repositoryName: pr.repository.name),
+              ),
+              const SizedBox(height: 16),
+              _LocalDetailRow(
+                title: 'From:',
+                icon: Icons.call_split,
+                child: Text(pr.sourceBranch),
+              ),
+              const SizedBox(height: 8),
+              _LocalDetailRow(
+                title: 'To:',
+                icon: Icons.merge,
+                child: Text(pr.targetBranch),
               ),
               const SizedBox(height: 10),
               if (prWithDetails.conflicts.isNotEmpty) ...[
@@ -157,114 +268,160 @@ class _PullRequestOverview extends StatelessWidget {
                   child: _MissingPolicies(ctrl: ctrl),
                 ),
               ],
-              Text('Title:', style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
-              SelectableText(pr.title),
-              const SizedBox(height: 10),
               if (pr.description != null && pr.description!.isNotEmpty) ...[
-                Text(
-                  'Description:',
-                  style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(Icons.subject, size: 14, color: context.colorScheme.primary),
+                    const SizedBox(width: 4),
+                    Text('Description',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                  ],
                 ),
+                const SizedBox(height: 5),
                 AppMarkdownWidget(
                   data: '${pr.description}',
-                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(p: context.textTheme.titleSmall),
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                      .copyWith(p: context.textTheme.titleSmall),
                   onTapLink: ctrl.onTapMarkdownLink,
                 ),
                 const SizedBox(height: 20),
               ],
               if (pr.mergeStatus != null && pr.mergeStatus!.isNotEmpty)
-                TextTitleDescription(title: 'Merge status: ', description: '${pr.mergeStatus}'),
+                _LocalDetailRow(
+                  title: 'Merge status:',
+                  icon: DevOpsIcons.merge,
+                  child: Text('${pr.mergeStatus}'),
+                ),
               const SizedBox(height: 10),
-              TextTitleDescription(title: 'Created at: ', description: pr.creationDate.toSimpleDate()),
+              _LocalDetailRow(
+                title: 'Created at:',
+                icon: Icons.calendar_month,
+                child: Text(pr.creationDate.toSimpleDate()),
+              ),
               if (pr.reviewers.isNotEmpty) ...[
-                SectionHeader(text: 'Reviewers'),
-                ...pr.reviewers.map(
-                  (r) => Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Row(
-                      children: [
-                        MemberAvatar(
-                          userDescriptor: ctrl.reviewers.firstWhere((rev) => rev.reviewer.id == r.id).descriptor,
-                          radius: 20,
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(DevOpsIcons.users, size: 14, color: context.colorScheme.primary),
+                    const SizedBox(width: 4),
+                    Text('Reviewers',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: pr.reviewers.map(
+                    (r) {
+                      final reviewer = r;
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Row(
+                          children: [
+                            MemberAvatar(
+                              userDescriptor: ctrl.reviewers.firstWhere((rev) => rev.reviewer.id == reviewer.id).descriptor,
+                              radius: 20,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Text(
+                                '${reviewer.displayName}${reviewer.isRequired ? ' (required)' : ''}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            if (reviewer.vote > 0)
+                              Icon(DevOpsIcons.success, color: Colors.green)
+                            else if (reviewer.vote < 0)
+                              Icon(DevOpsIcons.failed, color: context.colorScheme.error),
+                          ],
                         ),
-                        const SizedBox(width: 20),
-                        Text(r.displayName),
-                        if (r.isRequired) Text(' (required)'),
-                        const Spacer(),
-                        if (r.vote > 0)
-                          Icon(DevOpsIcons.success, color: Colors.green)
-                        else if (r.vote < 0)
-                          Icon(DevOpsIcons.failed, color: context.colorScheme.error),
-                      ],
-                    ),
-                  ),
+                      );
+                    },
+                  ).toList(),
                 ),
               ],
               if (prWithDetails.updates.isNotEmpty) ...[
-                SectionHeader(text: 'History'),
-                ...prWithDetails.updates.map(
-                  (u) => Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: switch (u) {
-                              VoteUpdate() => Row(
-                                children: [
-                                  if (u.content.voteIcon != null) ...[u.content.voteIcon!, const SizedBox(width: 10)],
-                                  _UserAvatar(update: u),
-                                  Expanded(child: Text('${u.author.displayName} ${u.content.voteDescription}')),
-                                ],
-                              ),
-                              StatusUpdate() => Row(
-                                children: [
-                                  _UserAvatar(update: u),
-                                  Expanded(
-                                    child: Text(
-                                      '${u.identity['displayName'] ?? u.author.displayName} ${u.content.statusUpdateDescription} the pull request',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: u),
-                              ThreadUpdate() => Column(
-                                children: u.comments
-                                    .map(
-                                      (c) => PullRequestCommentCard(
-                                        onEditComment: !ctrl.canEditPrComment(c)
-                                            ? null
-                                            : () => ctrl.editComment(c, threadId: u.id),
-                                        onAddComment: () => ctrl.addComment(threadId: u.id, parentCommentId: c.id),
-                                        onDeleteComment: !ctrl.canEditPrComment(c)
-                                            ? null
-                                            : () => ctrl.deleteComment(c, threadId: u.id),
-                                        comment: c,
-                                        threadId: u.id,
-                                        borderRadiusBottom: u.comments.length < 2 || c == u.comments.last,
-                                        borderRadiusTop: u.comments.length < 2 || c == u.comments.first,
-                                        threadContext: u.threadContext,
-                                        onGoToFileDiff: () => ctrl.goToFileDiff(filePath: u.threadContext?.filePath),
-                                        status: c == u.comments.first ? u.status : null,
-                                        onSetStatus: (s) => ctrl.setStatus(u, s),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              SystemUpdate() || _ => Row(
-                                children: [
-                                  _UserAvatar(update: u),
-                                  Expanded(child: Text(u.content)),
-                                ],
-                              ),
-                            },
-                          ),
-                          if (u is! ThreadUpdate) ...[const SizedBox(width: 10), Text(u.date.minutesAgo)],
-                        ],
-                      ),
-                      const Divider(height: 30),
-                    ],
-                  ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(Icons.history, size: 14, color: context.colorScheme.primary),
+                    const SizedBox(width: 4),
+                    Text('History',
+                        style: context.textTheme.titleSmall!.copyWith(color: context.colorScheme.onSecondary)),
+                  ],
                 ),
+                const SizedBox(height: 5),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: prWithDetails.updates.map(
+                    (u) {
+                      final update = u;
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: switch (update) {
+                                  VoteUpdate() => Row(
+                                    children: [
+                                      if (update.content.voteIcon != null) ...[update.content.voteIcon!, const SizedBox(width: 10)],
+                                      _UserAvatar(update: update),
+                                      Expanded(child: Text('${update.author.displayName} ${update.content.voteDescription}')),
+                                    ],
+                                  ),
+                                  StatusUpdate() => Row(
+                                    children: [
+                                      _UserAvatar(update: update),
+                                      Expanded(
+                                        child: Text(
+                                          '${update.identity['displayName'] ?? update.author.displayName} ${update.content.statusUpdateDescription} the pull request',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  IterationUpdate() => _RefUpdateWidget(ctrl: ctrl, iteration: update),
+                                  ThreadUpdate() => Column(
+                                    children: update.comments
+                                        .map(
+                                          (c) => PullRequestCommentCard(
+                                            onEditComment: !ctrl.canEditPrComment(c)
+                                                ? null
+                                                : () => ctrl.editComment(c, threadId: update.id),
+                                            onAddComment: () => ctrl.addComment(threadId: update.id, parentCommentId: c.id),
+                                            onDeleteComment: !ctrl.canEditPrComment(c)
+                                                ? null
+                                                : () => ctrl.deleteComment(c, threadId: update.id),
+                                            comment: c,
+                                            threadId: update.id,
+                                            borderRadiusBottom: update.comments.length < 2 || c == update.comments.last,
+                                            borderRadiusTop: update.comments.length < 2 || c == update.comments.first,
+                                            threadContext: update.threadContext,
+                                            onGoToFileDiff: () => ctrl.goToFileDiff(filePath: update.threadContext?.filePath),
+                                            status: c == update.comments.first ? update.status : null,
+                                            onSetStatus: (s) => ctrl.setStatus(update, s),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                  SystemUpdate() || _ => Row(
+                                    children: [
+                                      _UserAvatar(update: update),
+                                      Expanded(child: Text(update.content)),
+                                    ],
+                                  ),
+                                },
+                              ),
+                              if (update is! ThreadUpdate) ...[const SizedBox(width: 10), Text(update.date.minutesAgo)],
+                            ],
+                          ),
+                          const Divider(height: 30),
+                        ],
+                      );
+                    }).toList(),
+                ),
+              ],
+                const SizedBox(height: 20),
                 Row(
                   children: [
                     MemberAvatar(userDescriptor: pr.createdBy.descriptor, radius: 20),
@@ -274,7 +431,6 @@ class _PullRequestOverview extends StatelessWidget {
                   ],
                 ),
               ],
-            ],
           ),
         ),
       ),
@@ -459,7 +615,12 @@ class _RefUpdateWidget extends StatelessWidget {
                           const SizedBox(width: 10),
                           MemberAvatar(userDescriptor: committerDescriptor, radius: 15),
                           const SizedBox(width: 10),
-                          Text(c.author?.name ?? ''),
+                          Expanded(
+                            child: Text(
+                              c.author?.name ?? '',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                           const SizedBox(width: 10),
                           Text(c.author?.date?.minutesAgo ?? ''),
                         ],
