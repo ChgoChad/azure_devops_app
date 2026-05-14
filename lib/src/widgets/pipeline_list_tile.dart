@@ -16,9 +16,9 @@ class PipelineListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitleStyle = context.textTheme.bodySmall!.copyWith(
-      color: context.colorScheme.onSecondary.withValues(alpha: context.colorScheme.brightness == Brightness.dark ? 0.6 : 1),
+      color: context.colorScheme.onSecondary.withOpacity(context.colorScheme.brightness == Brightness.dark ? 0.6 : 1),
     );
-    final isCustomPipelineName = pipe.definition?.name != null && pipe.definition!.name! != pipe.repository?.name;
+    final isCustomPipelineName = pipe.definition?.name != null && pipe.definition?.name != pipe.repository?.name;
 
     final statusText = (pipe.status == PipelineStatus.completed ? pipe.result?.toString() : pipe.status?.toString()) ?? '';
     final statusColor = (pipe.status == PipelineStatus.completed ? pipe.result?.color : pipe.status?.color) ?? Colors.grey;
