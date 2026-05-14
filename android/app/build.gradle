@@ -4,6 +4,9 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -76,14 +79,13 @@ android {
     
     buildTypes {
         debug {
-           manifestPlaceholders.msalDebugPath = dartEnvironmentVariables.MSAL_DEBUG_PATH ? dartEnvironmentVariables.MSAL_DEBUG_PATH + "=" : "/"
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH ? dartEnvironmentVariables.MSAL_PROD_PATH + "=" : "/"
+           def msalPath = dartEnvironmentVariables.MSAL_DEBUG_PATH ?: dartEnvironmentVariables.MSAL_PROD_PATH
+           manifestPlaceholders.msalPath = msalPath ?: "/QG8o4quMfqXiTsA9PMn9DbcPBVo="
            manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: ""
         }
         
         profile {
-           manifestPlaceholders.msalDebugPath = dartEnvironmentVariables.MSAL_DEBUG_PATH ? dartEnvironmentVariables.MSAL_DEBUG_PATH + "=" : "/"
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH ? dartEnvironmentVariables.MSAL_PROD_PATH + "=" : "/"
+           manifestPlaceholders.msalPath = dartEnvironmentVariables.MSAL_PROD_PATH ?: "/QG8o4quMfqXiTsA9PMn9DbcPBVo="
            manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: ""
         }
 
@@ -91,7 +93,7 @@ android {
            if (keystoreProperties.containsKey('storeFile')) {
               signingConfig signingConfigs.release
            }
-           manifestPlaceholders.msalProdPath = dartEnvironmentVariables.MSAL_PROD_PATH ? dartEnvironmentVariables.MSAL_PROD_PATH + "=" : "/"
+           manifestPlaceholders.msalPath = dartEnvironmentVariables.MSAL_PROD_PATH ?: "/QG8o4quMfqXiTsA9PMn9DbcPBVo="
            manifestPlaceholders.admobAppId = dartEnvironmentVariables.ADMOB_APPID_ANDROID ?: ""
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

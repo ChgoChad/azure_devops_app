@@ -3,6 +3,7 @@ import 'package:azure_devops/src/extensions/context_extension.dart';
 import 'package:azure_devops/src/extensions/datetime_extension.dart';
 import 'package:azure_devops/src/models/commit.dart';
 import 'package:azure_devops/src/models/commits_tags.dart';
+import 'package:azure_devops/src/theme/dev_ops_icons_icons.dart';
 import 'package:azure_devops/src/widgets/app_base_page.dart';
 import 'package:azure_devops/src/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
@@ -25,14 +26,23 @@ class CommitListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = context.textTheme.bodySmall!;
+    final subtitleStyle = context.textTheme.bodySmall!.copyWith(
+      color: context.colorScheme.onSecondary.withValues(alpha: context.colorScheme.brightness == Brightness.dark ? 0.6 : 1),
+    );
     return InkWell(
       key: ValueKey('commit_${commit.commitId?.substring(0, 6)}'),
       onTap: onTap,
       child: Column(
         children: [
           ListTile(
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(DevOpsIcons.commit, color: context.colorScheme.primary),
+              ],
+            ),
             contentPadding: EdgeInsets.zero,
+            minLeadingWidth: 20,
             title: Text('${commit.comment}', overflow: TextOverflow.ellipsis, style: context.textTheme.labelLarge),
             subtitle: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,8 +51,7 @@ class CommitListTile extends StatelessWidget {
                 Row(
                   children: [
                     if (showAuthor) Text('${commit.author?.name}', style: subtitleStyle),
-                    if (showRepo && showAuthor)
-                      Text(' in ', style: subtitleStyle.copyWith(color: context.colorScheme.onSecondary)),
+                    if (showRepo && showAuthor) Text(' in ', style: subtitleStyle),
                     if (showRepo)
                       Expanded(
                         child: Text(commit.repositoryName, overflow: TextOverflow.ellipsis, style: subtitleStyle),
@@ -120,12 +129,19 @@ class _TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = context.textTheme.labelSmall!.copyWith(height: 1);
+    final subtitleStyle = context.textTheme.labelSmall!.copyWith(
+      height: 1,
+      fontWeight: FontWeight.bold,
+      fontSize: 10,
+    );
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: context.colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(100),
+        border: Border.all(
+          color: Colors.transparent,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

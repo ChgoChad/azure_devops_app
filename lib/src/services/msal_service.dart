@@ -21,18 +21,31 @@ class MsalService with AppLogger {
   Future<void> init() async {
     setTag('MsalService');
 
-    const msalClientId = String.fromEnvironment('MSAL_CLIENT_ID');
-    const msalRedirectUri = String.fromEnvironment('MSAL_REDIRECT_URI');
+    var msalClientId = const String.fromEnvironment('MSAL_CLIENT_ID');
+    var msalRedirectUri = const String.fromEnvironment('MSAL_REDIRECT_URI');
 
     if (msalClientId.isEmpty || msalRedirectUri.isEmpty) {
-      throw Exception('MSAL_CLIENT_ID or MSAL_REDIRECT_URI is missing. Please provide them via --dart-define.');
+      // Fallback for local development if not provided via --dart-define
+      msalClientId = 'fc3f2dc9-260a-4157-8d55-3a0e932df8d4';
+      msalRedirectUri = 'msauth://io.purplesoft.azuredevops/QG8o4quMfqXiTsA9PMn9DbcPBVo%3D';
+
+      logDebug('MSAL environment variables missing. Using default fallback values.');
     }
 
-    _pca = await SingleAccountPca.create(
-      clientId: msalClientId,
-      androidConfig: AndroidConfig(configFilePath: 'assets/msal_config.json', redirectUri: msalRedirectUri),
-      appleConfig: AppleConfig(),
-    );
+    logDebug('MSAL Config: ID: $msalClientId, URI: $msalRedirectUri');
+
+    try {
+      logDebug('Initializing MSAL PCA...');
+      _pca = await SingleAccountPca.create(
+        clientId: msalClientId,
+        androidConfig: AndroidConfig(configFilePath: 'assets/msal_config.json', redirectUri: msalRedirectUri),
+        appleConfig: AppleConfig(),
+      );
+      logDebug('MSAL PCA initialized successfully.');
+    } catch (e, s) {
+      logError('MSAL PCA initialization failed: $e', s);
+      rethrow;
+    }
   }
 
   Future<void> logout() async {
